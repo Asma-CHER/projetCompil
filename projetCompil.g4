@@ -1,18 +1,77 @@
 grammar projetCompil;
-IF:'if';
-INT:[0-9]+;
-CHAR : 'a'..'z'|' '|'A'..'Z';
 
-WS:[\n\t] -> skip;
-ID:[a-z]+;
+programme : COMPIL Nameprog '(' ')' '{' declarations START insts '}';
 
-exp:ID'=' INT ';' { int x; x=$INT.text;
-                    if(x==1)
-                          system.out.println("affectation valide");
-                    };  //x=$INT.ligne (pour la ligne)
 
-r:INT{int x=$INT.line;}
-    (ID{if($INT line==$ID.line})
-    k=Float v=Float {if($k.line = $v.line};
 
-prule: 'hello' CHAR+ exp ;
+// déclarations
+declarations : (dec declarations)|dec  ;
+dec : type var ';' ;
+type : INT | FLOAT|STRING;
+var : ((ID ',' var) | ID) ;
+
+// instructions
+insts : (inst ';' insts) | inst ';' ;
+inst : affect | ifinst | dowhile_inst| read | write;
+
+// affectation
+affect : ID AFF exp ;
+exp : exp opmi t | t;
+t : t opma endEx | endEx;
+opmi : PLUS | MINUS ;
+opma : MUL | DIV ;
+endEx : ID | '(' exp ')' | val ;
+val : INTEGERVAL | FLOATVAL | STRINGVAL;
+
+// instruction if
+ifinst : IF '(' comp ')' THEN '{' insts '}' (|ELSE '{' insts '}' ) ;
+comp : exp op exp ;
+op : SUP | INF | SUPE | INFE | DIF | EQ;
+
+//instruction do_while
+
+dowhile_inst : DO '{' insts '}' WHILE '(' comp ')' ;
+
+// instruction read/write
+read :  SCAN '(' listID ')' ;
+write : PRINT '(' (STRINGVAL|listID) ')' ;
+listID : ID ',' listID | ID ;
+
+
+
+//*********** REGEX ******************* //
+
+Nameprog : [A-Z][a-zA-Z0-9]*;
+ID : [a-zA-Z][a-zA-Z0-9]*;
+INTEGERVAL : '0'|[+-]?[1-9][0-9]*;
+FLOATVAL : '0'|[+-]?[1-9][0-9]*('.'[0-9]*);
+STRINGVAL : '.*';
+
+//******************* Mots clés *******************//
+
+COMPIL : 'compil';
+INT : 'intCompil';
+FLOAT : 'floatCompil';
+STRING : 'StringCompil';
+SCAN : 'scanCompil' ;
+PRINT : 'printCompil' ;
+START : 'start' ;
+IF : 'if';
+THEN : 'then';
+ELSE : 'else';
+DO : 'do';
+WHILE : 'while';
+
+// ************** opérateurs **************//
+
+AFF : '=';
+PLUS : '+';
+MINUS : '-';
+MUL : '*';
+DIV : '/';
+SUP : '>';
+INF : '<';
+SUPE : '>=';
+INFE : '<=';
+EQ : '==';
+DIF : '!=';
