@@ -21,7 +21,7 @@ operand : ID | val ;
 val : INTEGERVAL | FLOATVAL | STRINGVAL;
 
 // instruction if
-ifinst : IF '(' cond ')' THEN '{' instsList '}' (|ELSE '{' instsList '}' ) ;
+ifinst : IF '(' cond ')' THEN '{' instsList '}' |ELSE '{' instsList '}' ;
 cond : operand op operand ;
 op : SUP | INF | SUPE | INFE | DIF | EQ;
 
@@ -29,9 +29,11 @@ op : SUP | INF | SUPE | INFE | DIF | EQ;
 dowhile_inst : DO '{' instsList '}' WHILE '(' cond ')' ;
 
 // instruction read/write
-read :  SCAN '(' listID ')' ;
-write : PRINT '(' (STRINGVAL|listID) ')' ;
+read :  SCAN '(' listID ');' ;
+write : PRINT '(' chaine ');' ;
+chaine: listID| val;
 listID : ID ',' listID | ID ;
+
 
 
 //**************Skip*******************//
@@ -61,6 +63,7 @@ ID : [a-zA-Z][a-zA-Z0-9]*;
 INTEGERVAL : '0'|[+-]?[1-9][0-9]*;
 FLOATVAL : '0'|[+-]?[1-9][0-9]*('.'[0-9]*);
 STRINGVAL : '.*';
+
 
 
 // ************ opérateurs **************//
