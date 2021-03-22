@@ -56,11 +56,13 @@ WHILE : 'while';
 
 //*********** Valeurs ******************* //
 
-NAMEPROG : [A-Z][a-zA-Z0-9]*;
-ID : [a-zA-Z][a-zA-Z0-9]*;
+
 INTEGERVAL : '0'|[+-]?[1-9][0-9]*;
 FLOATVAL : '0'|[+-]?[1-9][0-9]*('.'[0-9]*);
 STRINGVAL : '.*';
+NAMEPROG : [A-Z][a-zA-Z0-9]*;
+ID : [a-zA-Z][a-zA-Z0-9]*;
+
 
 
 // ************ opérateurs **************//
