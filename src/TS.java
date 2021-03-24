@@ -4,6 +4,9 @@ public class TS
 {
     static public class Element {
 
+        String name;
+        boolean declared;
+        String type;
 
         public Element(String name, boolean declared, String type) {
             this.name = name;
@@ -12,10 +15,6 @@ public class TS
 
         }
 
-        String name;
-        boolean declared;
-        String type;
-
         public String getName() {
             return name;
         }
@@ -23,8 +22,6 @@ public class TS
         public void setName(String name) {
             this.name = name;
         }
-
-
 
         public boolean isDeclared() {
             return declared;
@@ -66,9 +63,7 @@ public class TS
     }
 
     public boolean containsElement(String name)
-    {
-        return getElement(name) != null;
-    }
+    { return getElement(name) != null; }
 
     public void addElement(Element e)
     {
@@ -76,8 +71,7 @@ public class TS
     }
 
     public void deleteElement(String name)
-    {
-        for (int i = 0; i < L.size(); i++) {
+    { for (int i = 0; i < L.size(); i++) {
             if(L.get(i).name.compareTo(name)==0)
             {
                 deleteElement(L.get(i));
@@ -92,9 +86,7 @@ public class TS
     }
 
     public int getSize()
-    {
-        return L.size();
-    }
+    { return L.size(); }
 
     public Element getElement(int i)
     {

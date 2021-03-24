@@ -1,27 +1,40 @@
 grammar projetCompil;
 
-tinyLang : COMPIL NAMEPROG '(' ')' '{' decList START instsList '}';
+tinyLang : COMPIL NAMEPROG '(' ')' '{' decList START instsList '}'EOF;
 
 // ***********************déclarations**********************//
-decList : dec decList|dec|;
+decList : dec decList
+        |dec
+        |;
 dec : type var ';' ;
-type : INT | FLOAT|STRING;
-var : ID ',' var | ID ;
+type : INT | FLOAT |STRING;
+var : ID ',' var
+    | ID ;
 
 //************************ instructions***********************//
-instsList : inst instsList| inst | ;
-inst : affect | ifinst | dowhile_inst| read | write;
+instsList : inst instsList
+            | inst
+            | ;
+inst : affect
+      | ifinst
+      | dowhile_inst
+      | read
+      | write;
 
 // affectation
 affect : ID AFF suite_operation ';';
-suite_operation : operation|operation operateur suite_operation|operand;
-operation : operand operateur operand ;
+suite_operation : operation
+                |operation operateur suite_operation
+                |operand;
+operation : operand operateur operand ;//routine de verification de compatibilite type;
 operateur : PLUS | MINUS |MUL | DIV ;
-operand : ID | val ;
+operand : ID //routine de verification de declaration
+        | val ;
 val : INTEGERVAL | FLOATVAL | STRINGVAL;
 
 // instruction if
-ifinst : IF '(' cond ')' THEN '{' instsList '}' |ELSE '{' instsList '}' ;
+ifinst : IF '(' cond ')' THEN '{' instsList '}'
+        |ELSE '{' instsList '}' ;
 cond : operand op operand ;
 op : SUP | INF | SUPE | INFE | DIF | EQ;
 
@@ -30,14 +43,16 @@ dowhile_inst : DO '{' instsList '}' WHILE '(' cond ')' ;
 
 // instruction read/write
 read :  SCAN '(' listID ');' ;
-write : PRINT '(' chaine ');' ;
-chaine: listID| val;
-listID : ID ',' listID | ID ;
+write : PRINT '('chaine ');' ;
+chaine: listID
+        | val;
+listID : ID ',' listID
+        | ID ;
 
 
 
 //**************Skip*******************//
-WS:[\n\t] -> skip;
+WS:[\n\t\r]+-> skip;
 //COMNT:  -> skip;
 
 //******************* Mots clés *******************//
@@ -59,8 +74,8 @@ WHILE : 'while';
 //*********** Valeurs ******************* //
 
 
-INTEGERVAL : '0'|[+-]?[1-9][0-9]*;
-FLOATVAL : '0'|[+-]?[1-9][0-9]*('.'[0-9]*);
+INTEGERVAL : '0'|'-'?[1-9][0-9]*;
+FLOATVAL : '-'?[1-9][0-9]*('.'[0-9]*);
 STRINGVAL : '.*';
 NAMEPROG : [A-Z][a-zA-Z0-9]*;
 ID : [a-zA-Z][a-zA-Z0-9]*;
