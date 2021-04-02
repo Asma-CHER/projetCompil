@@ -1,4 +1,4 @@
-// Generated from C:/Users/Racha/IdeaProjects/projetCompil\projetCompil.g4 by ANTLR 4.9.1
+package ANTLR;// Generated from C:/Users/pc/IdeaProjects/projetCompil\projetCompil.g4 by ANTLR 4.9.1
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 
 /**
@@ -58,23 +58,29 @@ public interface projetCompilVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitAffect(projetCompilParser.AffectContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link projetCompilParser#suite_operation}.
+	 * Visit a parse tree produced by {@link projetCompilParser#suite_operation()}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitSuite_operation(projetCompilParser.Suite_operationContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link projetCompilParser#operation}.
+	 * Visit a parse tree produced by {@link projetCompilParser#suite_operation2()}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitOperation(projetCompilParser.OperationContext ctx);
+	T visitSuite_operation2(projetCompilParser.Suite_operation2Context ctx);
 	/**
-	 * Visit a parse tree produced by {@link projetCompilParser#operateur}.
+	 * Visit a parse tree produced by {@link projetCompilParser#operateurP}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitOperateur(projetCompilParser.OperateurContext ctx);
+	T visitOperateurP(projetCompilParser.OperateurPContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link projetCompilParser#operateurM}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitOperateurM(projetCompilParser.OperateurMContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link projetCompilParser#operand}.
 	 * @param ctx the parse tree
@@ -123,6 +129,12 @@ public interface projetCompilVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitWrite(projetCompilParser.WriteContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link projetCompilParser#chaine}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitChaine(projetCompilParser.ChaineContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link projetCompilParser#listID}.
 	 * @param ctx the parse tree

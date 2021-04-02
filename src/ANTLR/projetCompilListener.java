@@ -1,4 +1,4 @@
-// Generated from C:/Users/Racha/IdeaProjects/projetCompil\projetCompil.g4 by ANTLR 4.9.1
+package ANTLR;// Generated from C:/Users/pc/IdeaProjects/projetCompil\projetCompil.g4 by ANTLR 4.9.1
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
 /**
@@ -87,35 +87,45 @@ public interface projetCompilListener extends ParseTreeListener {
 	 */
 	void exitAffect(projetCompilParser.AffectContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link projetCompilParser#suite_operation}.
+	 * Enter a parse tree produced by {@link projetCompilParser#suite_operation()}.
 	 * @param ctx the parse tree
 	 */
 	void enterSuite_operation(projetCompilParser.Suite_operationContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link projetCompilParser#suite_operation}.
+	 * Exit a parse tree produced by {@link projetCompilParser#suite_operation()}.
 	 * @param ctx the parse tree
 	 */
 	void exitSuite_operation(projetCompilParser.Suite_operationContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link projetCompilParser#operation}.
+	 * Enter a parse tree produced by {@link projetCompilParser#suite_operation2()}.
 	 * @param ctx the parse tree
 	 */
-	void enterOperation(projetCompilParser.OperationContext ctx);
+	void enterSuite_operation2(projetCompilParser.Suite_operation2Context ctx);
 	/**
-	 * Exit a parse tree produced by {@link projetCompilParser#operation}.
+	 * Exit a parse tree produced by {@link projetCompilParser#suite_operation2()}.
 	 * @param ctx the parse tree
 	 */
-	void exitOperation(projetCompilParser.OperationContext ctx);
+	void exitSuite_operation2(projetCompilParser.Suite_operation2Context ctx);
 	/**
-	 * Enter a parse tree produced by {@link projetCompilParser#operateur}.
+	 * Enter a parse tree produced by {@link projetCompilParser#operateurP}.
 	 * @param ctx the parse tree
 	 */
-	void enterOperateur(projetCompilParser.OperateurContext ctx);
+	void enterOperateurP(projetCompilParser.OperateurPContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link projetCompilParser#operateur}.
+	 * Exit a parse tree produced by {@link projetCompilParser#operateurP}.
 	 * @param ctx the parse tree
 	 */
-	void exitOperateur(projetCompilParser.OperateurContext ctx);
+	void exitOperateurP(projetCompilParser.OperateurPContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link projetCompilParser#operateurM}.
+	 * @param ctx the parse tree
+	 */
+	void enterOperateurM(projetCompilParser.OperateurMContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link projetCompilParser#operateurM}.
+	 * @param ctx the parse tree
+	 */
+	void exitOperateurM(projetCompilParser.OperateurMContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link projetCompilParser#operand}.
 	 * @param ctx the parse tree
@@ -196,6 +206,16 @@ public interface projetCompilListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitWrite(projetCompilParser.WriteContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link projetCompilParser#chaine}.
+	 * @param ctx the parse tree
+	 */
+	void enterChaine(projetCompilParser.ChaineContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link projetCompilParser#chaine}.
+	 * @param ctx the parse tree
+	 */
+	void exitChaine(projetCompilParser.ChaineContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link projetCompilParser#listID}.
 	 * @param ctx the parse tree

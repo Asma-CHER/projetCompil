@@ -22,12 +22,16 @@ inst : affect
       | write;
 
 // affectation
-affect : ID AFF suite_operation ';';
-suite_operation : operation
-                |operation operateur suite_operation
-                |operand;
-operation : operand operateur operand ;//routine de verification de compatibilite type;
-operateur : PLUS | MINUS |MUL | DIV ;
+affect : ID AFF suite_operation ';';//routine de verification de declaration
+suite_operation :suite_operation operateurP suite_operation2
+                |suite_operation2
+                ;
+suite_operation2 : suite_operation2 operateurM operand
+                    |operand;
+//operation : operand operateur operand
+           // |operand;//routine de verification de compatibilite type;
+operateurP : PLUS | MINUS ;
+operateurM: |MUL | DIV ;
 operand : ID //routine de verification de declaration
         | val ;
 val : INTEGERVAL | FLOATVAL | STRINGVAL;

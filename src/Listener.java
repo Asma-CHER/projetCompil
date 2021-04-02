@@ -1,12 +1,12 @@
+import ANTLR.projetCompilParser;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
-import java.net.SocketTimeoutException;
 import java.util.HashMap;
 import java.util.LinkedList;
-
+import ANTLR.projetCompilBaseListener;
 public class Listener extends projetCompilBaseListener{
 
         private TS table = new TS();
@@ -23,7 +23,9 @@ public class Listener extends projetCompilBaseListener{
         public TS getTable(){
                 return table;
         }
-        @Override public void exitTinyLang(projetCompilParser.TinyLangContext ctx) {
+
+        @Override
+        public void exitTinyLang(projetCompilParser.TinyLangContext ctx) {
                 if(errors.size() == 0) { // no errors
                         quads.addQuad("END","","","");
                         System.out.println("program compiled without errors!");
@@ -51,12 +53,9 @@ public class Listener extends projetCompilBaseListener{
                 }
         }
 
-
         @Override public void exitDecList(projetCompilParser.DecListContext ctx) {
 
         }
-
-
 
         @Override public void exitDec(projetCompilParser.DecContext ctx) {
 
@@ -82,23 +81,13 @@ public class Listener extends projetCompilBaseListener{
 
         }
 
-
-
         @Override public void exitType(projetCompilParser.TypeContext ctx) { }
-
-
 
         @Override public void exitVar(projetCompilParser.VarContext ctx) { }
 
-
-
         @Override public void exitInstsList(projetCompilParser.InstsListContext ctx) { }
 
-
-
         @Override public void exitInst(projetCompilParser.InstContext ctx) { }
-
-
 
         @Override public void exitAffect(projetCompilParser.AffectContext ctx) {
                 //verification de la declaration des variables
@@ -109,8 +98,8 @@ public class Listener extends projetCompilBaseListener{
                 String id = ctx.getChild(0).getText();
                 if(table.containsElement(id)){
                         if(table.getElement(id).declared){
-                                quads.addQuad("=","","",id);
-                                int sauv_temp = quads.size();
+                                quads.addQuad("=","exp","",id);
+                                //int sauv_temp = quads.size();
                         }else{
                                 errors.add("Variable: " + id+" non declaree a la ligne: "+line+" column: "+column);
                         }
@@ -119,27 +108,38 @@ public class Listener extends projetCompilBaseListener{
                 }
         }
 
+        @Override public void exitSuite_operation(projetCompilParser.Suite_operationContext ctx) {
 
+        }
 
-        @Override public void exitSuite_operation(projetCompilParser.Suite_operationContext ctx) { }
+        @Override public void exitOperand(projetCompilParser.OperandContext ctx) {
 
+             if(ctx.ID()!=null){
+                     Token idToken =ctx.ID().getSymbol();
+                     int line = idToken.getLine();
+                     int column = idToken.getCharPositionInLine()+1;
+                String id = ctx.ID().getText();
+                if(table.containsElement(id)){
+                        if(table.getElement(id).declared){
+                                quads.addQuad("+","",id,"expA");
+                                int sauv_temp = quads.size();
+                        }else{
+                              errors.add("Variable: " + id+" non declaree a la ligne: "+line+" column: "+column);
+                        }
+                }else{
+                        errors.add("Variable: " + id+" non declaree a la ligne: "+line+" column: "+column);
+                }}
 
+        }
 
-        @Override public void exitOperation(projetCompilParser.OperationContext ctx) { }
+        @Override
+        public void exitSuite_operation2(projetCompilParser.Suite_operation2Context ctx) {
 
+        }
 
+        @Override public void exitVal(projetCompilParser.ValContext ctx) {
 
-        @Override public void exitOperateur(projetCompilParser.OperateurContext ctx) { }
-
-
-
-        @Override public void exitOperand(projetCompilParser.OperandContext ctx) { }
-
-
-
-        @Override public void exitVal(projetCompilParser.ValContext ctx) { }
-
-
+        }
 
         @Override public void exitIfinst(projetCompilParser.IfinstContext ctx) { }
 

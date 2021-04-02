@@ -4,7 +4,9 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import java.io.IOException;
-import java.util.List;
+
+import ANTLR.projetCompilLexer;
+import ANTLR.projetCompilParser;
 
 import static org.antlr.v4.runtime.CharStreams.fromFileName;
 
