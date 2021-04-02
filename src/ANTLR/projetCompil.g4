@@ -3,9 +3,10 @@ grammar projetCompil;
 tinyLang : COMPIL NAMEPROG '(' ')' '{' decList START instsList '}'EOF;
 
 // ***********************déclarations**********************//
-decList : dec decList
+decList :dec decList
         |dec
-        |;
+        |
+        ;
 dec : type var ';' ;
 type : INT | FLOAT |STRING;
 var : ID ',' var
@@ -23,18 +24,20 @@ inst : affect
 
 // affectation
 affect : ID AFF suite_operation ';';//routine de verification de declaration
+
 suite_operation :suite_operation operateurP suite_operation2
                 |suite_operation2
                 ;
 suite_operation2 : suite_operation2 operateurM operand
-                    |operand;
+                   |operand;
 //operation : operand operateur operand
            // |operand;//routine de verification de compatibilite type;
 operateurP : PLUS | MINUS ;
-operateurM: |MUL | DIV ;
+operateurM: MUL | DIV ;
 operand : ID //routine de verification de declaration
-        | val ;
-val : INTEGERVAL | FLOATVAL | STRINGVAL;
+        | val
+        |'(' suite_operation')';
+val : INTEGERVAL | FLOATVAL | STRINGVAL |'-'INTEGERVAL|'-'FLOATVAL ;
 
 // instruction if
 ifinst : IF '(' cond ')' THEN '{' instsList '}'
@@ -78,13 +81,11 @@ WHILE : 'while';
 //*********** Valeurs ******************* //
 
 
-INTEGERVAL : '0'|'-'?[1-9][0-9]*;
+INTEGERVAL : '0'|[1-9][0-9]*;
 FLOATVAL : '-'?[1-9][0-9]*('.'[0-9]*);
-STRINGVAL : '.*';
 NAMEPROG : [A-Z][a-zA-Z0-9]*;
 ID : [a-zA-Z][a-zA-Z0-9]*;
-
-
+STRINGVAL : '.*';
 
 
 // ************ opérateurs **************//
