@@ -9,11 +9,17 @@ import java.util.LinkedList;
 import ANTLR.projetCompilBaseListener;
 public class Listener extends projetCompilBaseListener{
 
+        private int i;
+
+        private String entier = "intCompil";
+        private String reel = "floatCompil";
+        private String chaine = "StringCompil";
+
         private TS table = new TS();
         private Quads quads = new Quads();
         private LinkedList<String> errors = new LinkedList<>();
         private QuadsGen quadsGen;
-        private HashMap<ParserRuleContext,Integer> types = new HashMap<>();
+        private HashMap<ParserRuleContext,String> types = new HashMap<>();
 
 
         public LinkedList<String> getErrors(){
@@ -96,6 +102,11 @@ public class Listener extends projetCompilBaseListener{
                 int line = idToken.getLine();
                 int column = idToken.getCharPositionInLine()+1;
                 String id = ctx.getChild(0).getText();
+
+                        if (!affectTypesCompatible(table.getElement(ctx.ID().getText()).type, getCtxType(ctx.suite_operation())))
+                        errors.add("incompatible types in affectation ligne : " + ctx.ID().getSymbol().getLine());
+                clearMap();
+
                 if(table.containsElement(id)){
                         if(table.getElement(id).declared){
                                 quads.addQuad("=","exp","",id);
@@ -109,12 +120,23 @@ public class Listener extends projetCompilBaseListener{
         }
 
         @Override public void exitSuite_operation(projetCompilParser.Suite_operationContext ctx) {
+                if(ctx.suite_operation() == null)
+                        addCtxType(ctx,getCtxType(ctx.suite_operation2()));
+                else
+                {
+                        if(TypesCompatible(getCtxType(ctx.suite_operation()),getCtxType(ctx.suite_operation2())))
+                                addCtxType(ctx,getResultingType(getCtxType(ctx.suite_operation()),getCtxType(ctx.suite_operation2())));
+                        else {
+                                addCtxType(ctx, null);
+                        }
 
+                }
         }
 
         @Override public void exitOperand(projetCompilParser.OperandContext ctx) {
 
              if(ctx.ID()!=null){
+                     addCtxType(ctx, table.getElement(ctx.ID().getText()).type);
                      Token idToken =ctx.ID().getSymbol();
                      int line = idToken.getLine();
                      int column = idToken.getCharPositionInLine()+1;
@@ -130,14 +152,36 @@ public class Listener extends projetCompilBaseListener{
                         errors.add("Variable: " + id+" non declaree a la ligne: "+line+" column: "+column);
                 }}
 
+             if ( ctx.val() != null){
+                     addCtxType(ctx, getCtxType(ctx.val()));}
         }
 
         @Override
         public void exitSuite_operation2(projetCompilParser.Suite_operation2Context ctx) {
+                if(ctx.suite_operation2() == null)
+                        addCtxType(ctx,getCtxType(ctx.operand()));
+                else
+                {
+                        if(TypesCompatible(getCtxType(ctx.suite_operation2()),getCtxType(ctx.operand())))
+                                addCtxType(ctx,getResultingType(getCtxType(ctx.suite_operation2()),getCtxType(ctx.operand())));
+                        else {
+                                addCtxType(ctx, null);
+                        }
+
+                }
 
         }
 
         @Override public void exitVal(projetCompilParser.ValContext ctx) {
+                if (ctx.INTEGERVAL()!= null){
+                        addCtxType(ctx, entier);
+                }
+                if (ctx.FLOATVAL()!= null){
+                        addCtxType(ctx, reel);
+                }
+                if (ctx.STRINGVAL()!= null){
+                        addCtxType(ctx, chaine);
+                }
 
         }
 
@@ -164,15 +208,73 @@ public class Listener extends projetCompilBaseListener{
 
         @Override public void exitListID(projetCompilParser.ListIDContext ctx) { }
 
-
-        @Override public void enterEveryRule(ParserRuleContext ctx) { }
-
         @Override public void exitEveryRule(ParserRuleContext ctx) { }
 
         @Override public void visitTerminal(TerminalNode node) { }
 
         @Override public void visitErrorNode(ErrorNode node) { }
 
+
+
+        private void addCtxType(ParserRuleContext ctx, String type) {
+                types.put(ctx, type);
+        }
+
+        private String getCtxType(ParserRuleContext ctx) {
+                return types.get(ctx);
+        }
+
+        private void clearMap() {
+                types.clear();
+        }
+
+
+        private boolean affectTypesCompatible(String premier, String second) {
+                if (premier == entier) {
+                        if (second == entier) {
+                                return true;
+                        } else {
+                                System.out.println("types incompatibles");
+                                return false;
+                        }
+                } else if (premier == reel) {
+                        if (second == entier || second == reel) {
+                                return true;
+                        } else {
+                                System.out.println("types incompatibles");
+                                return false;
+                        }
+                } else if (premier == chaine) {
+                        if (second == chaine) {
+                                return true;
+                        } else {
+                                System.out.println("types incompatibles");
+                                return false;
+                        }
+                }
+                return false;
+        }
+
+
+        private boolean TypesCompatible(String premier, String second) {
+                if ((premier == entier || premier == reel) && (second == entier || second == reel)){
+                        return true;
+                }
+                return false;
+
+        }
+
+
+
+        private String getResultingType(String premier, String second) {
+                if (premier == entier && second == entier ){
+                        return entier;
+                }
+                if (premier == reel || second == reel){
+                        return reel;
+                }
+                return null;
+        }
 
     }
 

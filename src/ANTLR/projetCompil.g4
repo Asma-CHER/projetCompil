@@ -37,7 +37,7 @@ operateurM: MUL | DIV ;
 operand : ID //routine de verification de declaration
         | val
         |'(' suite_operation')';
-val : INTEGERVAL | FLOATVAL | STRINGVAL |'-'INTEGERVAL|'-'FLOATVAL ;
+val : INTEGERVAL | FLOATVAL | STRINGVAL |MINUS INTEGERVAL|MINUS FLOATVAL ;
 
 // instruction if
 ifinst : IF '(' cond ')' THEN '{' instsList '}'
