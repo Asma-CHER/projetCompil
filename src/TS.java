@@ -7,11 +7,13 @@ public class TS
         String name;
         boolean declared;
         String type;
+        String value;
 
-        public Element(String name, boolean declared, String type) {
+        public Element(String name, boolean declared, String type, String value) {
             this.name = name;
             this.declared = declared;
             this.type = type;
+            this.value =value;
 
         }
 
@@ -39,12 +41,21 @@ public class TS
             this.type = type;
         }
 
+        public String getValue() {
+            return value;
+        }
+
+        public void setValue(String value) {
+            this.value = value;
+        }
+
         @Override
         public String toString() {
             return "Element{" +
                     "name='" + name + '\'' +
                     ", declared=" + declared +
                     ", type='" + type + '\'' +
+                    ", value='" + value +
                     '}';
         }
     }

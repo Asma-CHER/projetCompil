@@ -1,4 +1,3 @@
-import ANTLR.projetCompilParser;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ErrorNode;
@@ -6,8 +5,8 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 
 import java.util.HashMap;
 import java.util.LinkedList;
-import ANTLR.projetCompilBaseListener;
-public class Listener extends projetCompilBaseListener{
+
+public class Listener extends projetCompilBaseListener {
 
         private int i;
 
@@ -21,6 +20,9 @@ public class Listener extends projetCompilBaseListener{
         private QuadsGen quadsGen;
         private HashMap<ParserRuleContext,String> types = new HashMap<>();
 
+        //variable pour IF_instruction
+        private LinkedList<String> pile = new LinkedList<>();
+        private int sauvCond,sauvDebWile,sauvElse, sauvBR;
 
         public LinkedList<String> getErrors(){
                 return this.errors;
@@ -44,7 +46,7 @@ public class Listener extends projetCompilBaseListener{
                         System.out.println("********************** Les QUADS *****************************");
 
                         for (int i = 0; i < quads.size(); i++) {
-                                System.out.println(quads.getQuad(i).toString());
+                                System.out.println(i+"-"+quads.getQuad(i).toString());
                         }
                         System.out.println("**************************************************************");
 
@@ -79,7 +81,7 @@ public class Listener extends projetCompilBaseListener{
                                 errors.add("Double declaration de la variable: " + varName+" a la ligne: "+line+" column: "+column);
                         }
                          else
-                                table.addElement(new TS.Element(varName,true, varType));
+                                table.addElement(new TS.Element(varName,true, varType,"10"));
                         if(vars.var() == null)
                                 return;
                 }
@@ -103,9 +105,9 @@ public class Listener extends projetCompilBaseListener{
                 int column = idToken.getCharPositionInLine()+1;
                 String id = ctx.getChild(0).getText();
 
-                        if (!affectTypesCompatible(table.getElement(ctx.ID().getText()).type, getCtxType(ctx.suite_operation())))
+                     /*   if (!affectTypesCompatible(table.getElement(ctx.ID().getText()).type, getCtxType(ctx.suite_operation())))
                         errors.add("incompatible types in affectation ligne : " + ctx.ID().getSymbol().getLine());
-                clearMap();
+                clearMap();*/
 
                 if(table.containsElement(id)){
                         if(table.getElement(id).declared){
@@ -120,7 +122,7 @@ public class Listener extends projetCompilBaseListener{
         }
 
         @Override public void exitSuite_operation(projetCompilParser.Suite_operationContext ctx) {
-                if(ctx.suite_operation() == null)
+               /* if(ctx.suite_operation() == null)
                         addCtxType(ctx,getCtxType(ctx.suite_operation2()));
                 else
                 {
@@ -130,21 +132,21 @@ public class Listener extends projetCompilBaseListener{
                                 addCtxType(ctx, null);
                         }
 
-                }
+                }*/
         }
 
         @Override public void exitOperand(projetCompilParser.OperandContext ctx) {
 
              if(ctx.ID()!=null){
-                     addCtxType(ctx, table.getElement(ctx.ID().getText()).type);
+                   //  addCtxType(ctx, table.getElement(ctx.ID().getText()).type);
                      Token idToken =ctx.ID().getSymbol();
                      int line = idToken.getLine();
                      int column = idToken.getCharPositionInLine()+1;
                 String id = ctx.ID().getText();
                 if(table.containsElement(id)){
                         if(table.getElement(id).declared){
-                                quads.addQuad("+","",id,"expA");
-                                int sauv_temp = quads.size();
+                              //  quads.addQuad("+","",id,"expA");
+                              //  int sauv_temp = quads.size();
                         }else{
                               errors.add("Variable: " + id+" non declaree a la ligne: "+line+" column: "+column);
                         }
@@ -153,7 +155,8 @@ public class Listener extends projetCompilBaseListener{
                 }}
 
              if ( ctx.val() != null){
-                     addCtxType(ctx, getCtxType(ctx.val()));}
+                    // addCtxType(ctx, getCtxType(ctx.val()));
+             }
         }
 
         @Override
@@ -185,19 +188,80 @@ public class Listener extends projetCompilBaseListener{
 
         }
 
-        @Override public void exitIfinst(projetCompilParser.IfinstContext ctx) { }
+        @Override public void exitIfinst(projetCompilParser.IfinstContext ctx) {
+            //    quads.addQuad("BR", String.valueOf(quads.size()+1),"","");
+                quads.getQuad(sauvCond-1).setQuad(1, String.valueOf(quads.size()));
+        }
+
+        @Override
+        public void enterElseinst(projetCompilParser.ElseinstContext ctx) {
+                quads.addQuad("BR", "","","");
+                sauvBR=quads.size();
+                quads.getQuad(sauvCond).setQuad(1, String.valueOf(quads.size()));
+        }
+
+        @Override
+        public void exitElseinst(projetCompilParser.ElseinstContext ctx) {
+               quads.getQuad(sauvBR-1).setQuad(1, String.valueOf(quads.size()+1));
+
+        }
+
+        @Override public void exitCond(projetCompilParser.CondContext ctx) {
+                String op1;
+                String op2;
+                String opt;
+                op2=pile.removeLast();
+                op1=pile.removeLast();
+                opt=ctx.op().getText();
+                quads.addQuad(getBR(opt),"",op1,op2);
+                sauvCond = quads.size()-1;
+        }
+
+        @Override
+        public void exitOperandif(projetCompilParser.OperandifContext ctx) {
+                if(ctx.ID()!=null) {
+                        Token idToken = ctx.ID().getSymbol();
+                        int line = idToken.getLine();
+                        int column = idToken.getCharPositionInLine() + 1;
+                        String op1 = ctx.ID().getText();
+                        String type1;
+                        if (table.containsElement(op1)) {
+                                if (table.getElement(op1).declared) {
+                                        type1 = table.getElement(op1).getType();
+                                        if (table.getElement(op1).getValue() != null) {
+                                                if (type1.equals("intCompil") || type1.equals("floatCompil")) {
+                                                        pile.add(op1);
+                                                } else {
+                                                        errors.add("Variable: " + op1 + " doit etre de type intCompil ou floatCompil a la ligne: " + line + " column: " + column);
+                                                }
+                                        } else {
+                                                errors.add("Variable: " + op1 + " non initialisée a la ligne: " + line + " column: " + column);
+                                        }
+                                } else {
+                                        errors.add("Variable: " + op1 + " non declaree a la ligne: " + line + " column: " + column);
+                                }
+                        } else {
+                                errors.add("Variable: " + op1 + " non declaree a la ligne: " + line + " column: " + column);
+                        }
+                }
+                if(ctx.val()!=null){
+                        pile.add(ctx.val().getText());
+                }
+               /* if(ctx.val()==null ||ctx.ID()==null){
+                        errors.add("Erreur instruction if : l'operand doit etre une valeur ou un ID ");
+                }*/
+        }
 
 
+        @Override public void enterDowhile_inst(projetCompilParser.Dowhile_instContext ctx) {
+                sauvDebWile =quads.size();
+        }
 
-        @Override public void exitCond(projetCompilParser.CondContext ctx) { }
+        @Override public void exitDowhile_inst(projetCompilParser.Dowhile_instContext ctx) {
+                quads.getQuad(sauvCond).setQuad(1, String.valueOf(sauvDebWile));
+                quads.getQuad(sauvCond).setQuad(0,getBRinverse(quads.getQuad(sauvCond).getVal(0)));
 
-
-
-        @Override public void exitOp(projetCompilParser.OpContext ctx) { }
-
-
-        @Override public void exitDowhile_inst(projetCompilParser.Dowhile_instContext ctx) { }
-
+        }
 
 
         @Override public void exitRead(projetCompilParser.ReadContext ctx) { }
@@ -276,5 +340,39 @@ public class Listener extends projetCompilBaseListener{
                 return null;
         }
 
+        private static String getBR(String s)
+        {  switch (s) {
+                case "<":
+                        return "BGE";
+                case ">":
+                        return "BLE";
+                case "<=":
+                        return "BG";
+                case ">=":
+                        return "BL";
+                case "==":
+                        return "BNE";
+                case "!=":
+                        return "BE";
+        }
+                return null;
+        }
+        private String getBRinverse(String s) {
+                switch (s) {
+                        case "BGE":
+                                return "BL";
+                        case "BLE":
+                                return "BG";
+                        case "BG":
+                                return "BLE";
+                        case "BL":
+                                return "BGE";
+                        case "==":
+                                return "BE";
+                        case "!=":
+                                return "BNE";
+                }
+                return null;
+        }
     }
 
