@@ -22,7 +22,7 @@ inst : affect
       | read
       | write;
 
-// affectation
+// affectation\
 affect : ID AFF suite_operation ';';//routine de verification de declaration
 
 suite_operation :suite_operation operateurP suite_operation2
