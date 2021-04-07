@@ -5,11 +5,11 @@ floatCompil div;
 StringCompil chaine1;
 start
 
-term1=10;
-term2=a;
-term2=a*a;
-a=10;
 
+c=5;
+a=10;
+term1 = term1 +a;
+b = 15;
 if (a>b) then{
 a=b+c;
 b=10;}else{

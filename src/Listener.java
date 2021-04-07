@@ -9,6 +9,7 @@ import java.util.LinkedList;
 public class Listener extends projetCompilBaseListener {
 
         private int i;
+        private String v= null;
 
         private String entier = "intCompil";
         private String reel = "floatCompil";
@@ -80,14 +81,15 @@ public class Listener extends projetCompilBaseListener {
                         if(table.containsElement(varName)) {
                                 errors.add("Double declaration de la variable: " + varName+" a la ligne: "+line+" column: "+column);
                         }
-                         else
-                                table.addElement(new TS.Element(varName,true, varType,"10"));
+                        else
+                                table.addElement(new TS.Element(varName,true, varType, null, false));
                         if(vars.var() == null)
                                 return;
                 }
 
 
         }
+
 
         @Override public void exitType(projetCompilParser.TypeContext ctx) { }
 
@@ -105,25 +107,41 @@ public class Listener extends projetCompilBaseListener {
                 int column = idToken.getCharPositionInLine()+1;
                 String id = ctx.getChild(0).getText();
 
-                     /*   if (!affectTypesCompatible(table.getElement(ctx.ID().getText()).type, getCtxType(ctx.suite_operation())))
-                        errors.add("incompatible types in affectation ligne : " + ctx.ID().getSymbol().getLine());
-                clearMap();*/
+                //System.out.println("le type est "+ getCtxType(ctx.suite_operation()));
+
+                if (table.getElement(ctx.ID().getText()) != null){
+                        if (!affectTypesCompatible(table.getElement(ctx.ID().getText()).type, getCtxType(ctx.suite_operation())))
+
+                                errors.add("incompatible types in affectation ligne : " + ctx.ID().getSymbol().getLine());
+                        clearMap();}
 
                 if(table.containsElement(id)){
                         if(table.getElement(id).declared){
                                 quads.addQuad("=","exp","",id);
                                 //int sauv_temp = quads.size();
+                                table.getElement(id).setInitialise(true);
+                                table.getElement(id).setValue(v);
+
                         }else{
                                 errors.add("Variable: " + id+" non declaree a la ligne: "+line+" column: "+column);
                         }
                 }else{
-                       errors.add("Variable: " + id+" non declaree a la ligne: "+line+" column: "+column);
+                        errors.add("Variable: " + id+" non declaree a la ligne: "+line+" column: "+column);
                 }
         }
 
         @Override public void exitSuite_operation(projetCompilParser.Suite_operationContext ctx) {
-               /* if(ctx.suite_operation() == null)
+
+
+                if(ctx.suite_operation() == null){
                         addCtxType(ctx,getCtxType(ctx.suite_operation2()));
+
+                /*for (int i=0; i< ctx.children.size(); i++){
+                        if (ctx.suite_operation().suite_operation2().operand().ID() !=null){
+                                System.out.println("affichage"+ ctx.children.get(i).getText());
+                        }
+
+                }*/}
                 else
                 {
                         if(TypesCompatible(getCtxType(ctx.suite_operation()),getCtxType(ctx.suite_operation2())))
@@ -132,31 +150,36 @@ public class Listener extends projetCompilBaseListener {
                                 addCtxType(ctx, null);
                         }
 
-                }*/
+                }
         }
 
         @Override public void exitOperand(projetCompilParser.OperandContext ctx) {
 
-             if(ctx.ID()!=null){
-                   //  addCtxType(ctx, table.getElement(ctx.ID().getText()).type);
-                     Token idToken =ctx.ID().getSymbol();
-                     int line = idToken.getLine();
-                     int column = idToken.getCharPositionInLine()+1;
-                String id = ctx.ID().getText();
-                if(table.containsElement(id)){
-                        if(table.getElement(id).declared){
-                              //  quads.addQuad("+","",id,"expA");
-                              //  int sauv_temp = quads.size();
+                if(ctx.ID()!=null){
+                        addCtxType(ctx, table.getElement(ctx.ID().getText()).type);
+                        Token idToken =ctx.ID().getSymbol();
+                        int line = idToken.getLine();
+                        int column = idToken.getCharPositionInLine()+1;
+                        String id = ctx.ID().getText();
+                        if(table.containsElement(id)){
+                                if(table.getElement(id).declared){
+                                        if(table.getElement(id).isInitialise()) {
+                                                quads.addQuad("+", "", id, "expA");
+                                                int sauv_temp = quads.size();
+                                        }
+                                        else {
+                                                errors.add("Variable: " + id+" non initialisee a la ligne: "+line+" column: "+column);
+                                        }
+                                }else{
+                                        errors.add("Variable: " + id+" non declaree a la ligne: "+line+" column: "+column);
+                                }
                         }else{
-                              errors.add("Variable: " + id+" non declaree a la ligne: "+line+" column: "+column);
-                        }
-                }else{
-                        errors.add("Variable: " + id+" non declaree a la ligne: "+line+" column: "+column);
-                }}
+                                errors.add("Variable: " + id+" non declaree a la ligne: "+line+" column: "+column);
+                        }}
 
-             if ( ctx.val() != null){
-                    // addCtxType(ctx, getCtxType(ctx.val()));
-             }
+                if ( ctx.val() != null){
+                        addCtxType(ctx, getCtxType(ctx.val()));
+                }
         }
 
         @Override
@@ -178,12 +201,15 @@ public class Listener extends projetCompilBaseListener {
         @Override public void exitVal(projetCompilParser.ValContext ctx) {
                 if (ctx.INTEGERVAL()!= null){
                         addCtxType(ctx, entier);
+                        v = String.valueOf(ctx.INTEGERVAL());
                 }
                 if (ctx.FLOATVAL()!= null){
                         addCtxType(ctx, reel);
+                        v = String.valueOf(ctx.FLOATVAL());
                 }
                 if (ctx.STRINGVAL()!= null){
                         addCtxType(ctx, chaine);
+                        v = String.valueOf(ctx.STRINGVAL());
                 }
 
         }
@@ -207,11 +233,14 @@ public class Listener extends projetCompilBaseListener {
         }
 
         @Override public void exitCond(projetCompilParser.CondContext ctx) {
-                String op1;
-                String op2;
+                String op1="";
+                String op2="";
                 String opt;
-                op2=pile.removeLast();
-                op1=pile.removeLast();
+                if(pile.size()>=2){
+                        op2=pile.removeLast();
+                        op1=pile.removeLast();
+                }
+
                 opt=ctx.op().getText();
                 quads.addQuad(getBR(opt),"",op1,op2);
                 sauvCond = quads.size()-1;
@@ -228,7 +257,7 @@ public class Listener extends projetCompilBaseListener {
                         if (table.containsElement(op1)) {
                                 if (table.getElement(op1).declared) {
                                         type1 = table.getElement(op1).getType();
-                                        if (table.getElement(op1).getValue() != null) {
+                                        if (table.getElement(op1).isInitialise()) {
                                                 if (type1.equals("intCompil") || type1.equals("floatCompil")) {
                                                         pile.add(op1);
                                                 } else {
@@ -294,22 +323,22 @@ public class Listener extends projetCompilBaseListener {
 
 
         private boolean affectTypesCompatible(String premier, String second) {
-                if (premier == entier) {
-                        if (second == entier) {
+                if (premier.equals(entier)) {
+                        if (second.equals(entier)) {
                                 return true;
                         } else {
                                 System.out.println("types incompatibles");
                                 return false;
                         }
-                } else if (premier == reel) {
-                        if (second == entier || second == reel) {
+                } else if (premier.equals(reel)) {
+                        if (second.equals(entier) || second.equals(reel)) {
                                 return true;
                         } else {
                                 System.out.println("types incompatibles");
                                 return false;
                         }
-                } else if (premier == chaine) {
-                        if (second == chaine) {
+                } else if (premier.equals(chaine)) {
+                        if (second.equals(chaine)) {
                                 return true;
                         } else {
                                 System.out.println("types incompatibles");
@@ -321,7 +350,7 @@ public class Listener extends projetCompilBaseListener {
 
 
         private boolean TypesCompatible(String premier, String second) {
-                if ((premier == entier || premier == reel) && (second == entier || second == reel)){
+                if ((premier.equals(entier) || premier.equals(reel)) && ((second.equals(entier) || second.equals(reel)))){
                         return true;
                 }
                 return false;
@@ -331,10 +360,10 @@ public class Listener extends projetCompilBaseListener {
 
 
         private String getResultingType(String premier, String second) {
-                if (premier == entier && second == entier ){
+                if (premier.equals(entier) && second.equals(entier )){
                         return entier;
                 }
-                if (premier == reel || second == reel){
+                if (premier.equals(reel) || second.equals(reel)){
                         return reel;
                 }
                 return null;
