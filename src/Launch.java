@@ -5,9 +5,6 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import java.io.IOException;
 
-import ANTLR.projetCompilLexer;
-import ANTLR.projetCompilParser;
-
 import static org.antlr.v4.runtime.CharStreams.fromFileName;
 
 public class Launch {

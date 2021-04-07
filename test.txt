@@ -1,13 +1,23 @@
 compil NAMEPROG ()
 {
-intCompil term1, term2, a, c;
+intCompil term1, term2, a,b,c ;
 floatCompil div;
 StringCompil chaine1;
 start
 
-a = 10;
-term1 = 12;
-div = term1 +c;
-term1 = 5;
-term2 = term1 +6;
+term1=10;
+term2=a;
+term2=a*a;
+a=10;
+
+if (a>b) then{
+a=b+c;
+b=10;}else{
+a=b+c;
+}
+if (a>10) then{
+term1=term2+term1;
+term2=term2+term1;
+}
+do{term1=c;}while(b<=c)
   }

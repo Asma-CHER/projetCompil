@@ -1,4 +1,3 @@
-import ANTLR.projetCompilParser;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ErrorNode;
@@ -6,11 +5,10 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 
 import java.util.HashMap;
 import java.util.LinkedList;
-import ANTLR.projetCompilBaseListener;
-public class Listener extends projetCompilBaseListener{
 
-        private String v= null;
-        private boolean k =false;
+public class Listener extends projetCompilBaseListener {
+
+        private int i;
 
         private String entier = "intCompil";
         private String reel = "floatCompil";
@@ -22,6 +20,9 @@ public class Listener extends projetCompilBaseListener{
         private QuadsGen quadsGen;
         private HashMap<ParserRuleContext,String> types = new HashMap<>();
 
+        //variable pour IF_instruction
+        private LinkedList<String> pile = new LinkedList<>();
+        private int sauvCond,sauvDebWile,sauvElse, sauvBR;
 
         public LinkedList<String> getErrors(){
                 return this.errors;
@@ -45,7 +46,7 @@ public class Listener extends projetCompilBaseListener{
                         System.out.println("********************** Les QUADS *****************************");
 
                         for (int i = 0; i < quads.size(); i++) {
-                                System.out.println(quads.getQuad(i).toString());
+                                System.out.println(i+"-"+quads.getQuad(i).toString());
                         }
                         System.out.println("**************************************************************");
 
@@ -80,7 +81,7 @@ public class Listener extends projetCompilBaseListener{
                                 errors.add("Double declaration de la variable: " + varName+" a la ligne: "+line+" column: "+column);
                         }
                          else
-                                table.addElement(new TS.Element(varName,true, varType, null, false));
+                                table.addElement(new TS.Element(varName,true, varType,"10"));
                         if(vars.var() == null)
                                 return;
                 }
@@ -104,21 +105,14 @@ public class Listener extends projetCompilBaseListener{
                 int column = idToken.getCharPositionInLine()+1;
                 String id = ctx.getChild(0).getText();
 
-                //System.out.println("le type est "+ getCtxType(ctx.suite_operation()));
-
-                if (table.getElement(ctx.ID().getText()) != null){
-                if (!affectTypesCompatible(table.getElement(ctx.ID().getText()).type, getCtxType(ctx.suite_operation())))
-
+                     /*   if (!affectTypesCompatible(table.getElement(ctx.ID().getText()).type, getCtxType(ctx.suite_operation())))
                         errors.add("incompatible types in affectation ligne : " + ctx.ID().getSymbol().getLine());
-                clearMap();}
+                clearMap();*/
 
                 if(table.containsElement(id)){
                         if(table.getElement(id).declared){
                                 quads.addQuad("=","exp","",id);
                                 //int sauv_temp = quads.size();
-                                table.getElement(id).setInitialise(true);
-                                table.getElement(id).setValue(v);
-
                         }else{
                                 errors.add("Variable: " + id+" non declaree a la ligne: "+line+" column: "+column);
                         }
@@ -128,17 +122,8 @@ public class Listener extends projetCompilBaseListener{
         }
 
         @Override public void exitSuite_operation(projetCompilParser.Suite_operationContext ctx) {
-
-
-                if(ctx.suite_operation() == null){
+               /* if(ctx.suite_operation() == null)
                         addCtxType(ctx,getCtxType(ctx.suite_operation2()));
-
-                /*for (int i=0; i< ctx.children.size(); i++){
-                        if (ctx.suite_operation().suite_operation2().operand().ID() !=null){
-                                System.out.println("affichage"+ ctx.children.get(i).getText());
-                        }
-
-                }*/}
                 else
                 {
                         if(TypesCompatible(getCtxType(ctx.suite_operation()),getCtxType(ctx.suite_operation2())))
@@ -147,21 +132,21 @@ public class Listener extends projetCompilBaseListener{
                                 addCtxType(ctx, null);
                         }
 
-                }
+                }*/
         }
 
         @Override public void exitOperand(projetCompilParser.OperandContext ctx) {
 
              if(ctx.ID()!=null){
-                     addCtxType(ctx, table.getElement(ctx.ID().getText()).type);
+                   //  addCtxType(ctx, table.getElement(ctx.ID().getText()).type);
                      Token idToken =ctx.ID().getSymbol();
                      int line = idToken.getLine();
                      int column = idToken.getCharPositionInLine()+1;
                 String id = ctx.ID().getText();
                 if(table.containsElement(id)){
                         if(table.getElement(id).declared){
-                                quads.addQuad("+","",id,"expA");
-                                int sauv_temp = quads.size();
+                              //  quads.addQuad("+","",id,"expA");
+                              //  int sauv_temp = quads.size();
                         }else{
                               errors.add("Variable: " + id+" non declaree a la ligne: "+line+" column: "+column);
                         }
@@ -170,7 +155,7 @@ public class Listener extends projetCompilBaseListener{
                 }}
 
              if ( ctx.val() != null){
-                     addCtxType(ctx, getCtxType(ctx.val()));
+                    // addCtxType(ctx, getCtxType(ctx.val()));
              }
         }
 
@@ -193,32 +178,90 @@ public class Listener extends projetCompilBaseListener{
         @Override public void exitVal(projetCompilParser.ValContext ctx) {
                 if (ctx.INTEGERVAL()!= null){
                         addCtxType(ctx, entier);
-                        v = String.valueOf(ctx.INTEGERVAL());
                 }
                 if (ctx.FLOATVAL()!= null){
                         addCtxType(ctx, reel);
-                        v = String.valueOf(ctx.FLOATVAL());
                 }
                 if (ctx.STRINGVAL()!= null){
                         addCtxType(ctx, chaine);
-                        v = String.valueOf(ctx.STRINGVAL());
                 }
 
         }
 
-        @Override public void exitIfinst(projetCompilParser.IfinstContext ctx) { }
+        @Override public void exitIfinst(projetCompilParser.IfinstContext ctx) {
+            //    quads.addQuad("BR", String.valueOf(quads.size()+1),"","");
+                quads.getQuad(sauvCond-1).setQuad(1, String.valueOf(quads.size()));
+        }
+
+        @Override
+        public void enterElseinst(projetCompilParser.ElseinstContext ctx) {
+                quads.addQuad("BR", "","","");
+                sauvBR=quads.size();
+                quads.getQuad(sauvCond).setQuad(1, String.valueOf(quads.size()));
+        }
+
+        @Override
+        public void exitElseinst(projetCompilParser.ElseinstContext ctx) {
+               quads.getQuad(sauvBR-1).setQuad(1, String.valueOf(quads.size()+1));
+
+        }
+
+        @Override public void exitCond(projetCompilParser.CondContext ctx) {
+                String op1;
+                String op2;
+                String opt;
+                op2=pile.removeLast();
+                op1=pile.removeLast();
+                opt=ctx.op().getText();
+                quads.addQuad(getBR(opt),"",op1,op2);
+                sauvCond = quads.size()-1;
+        }
+
+        @Override
+        public void exitOperandif(projetCompilParser.OperandifContext ctx) {
+                if(ctx.ID()!=null) {
+                        Token idToken = ctx.ID().getSymbol();
+                        int line = idToken.getLine();
+                        int column = idToken.getCharPositionInLine() + 1;
+                        String op1 = ctx.ID().getText();
+                        String type1;
+                        if (table.containsElement(op1)) {
+                                if (table.getElement(op1).declared) {
+                                        type1 = table.getElement(op1).getType();
+                                        if (table.getElement(op1).getValue() != null) {
+                                                if (type1.equals("intCompil") || type1.equals("floatCompil")) {
+                                                        pile.add(op1);
+                                                } else {
+                                                        errors.add("Variable: " + op1 + " doit etre de type intCompil ou floatCompil a la ligne: " + line + " column: " + column);
+                                                }
+                                        } else {
+                                                errors.add("Variable: " + op1 + " non initialisée a la ligne: " + line + " column: " + column);
+                                        }
+                                } else {
+                                        errors.add("Variable: " + op1 + " non declaree a la ligne: " + line + " column: " + column);
+                                }
+                        } else {
+                                errors.add("Variable: " + op1 + " non declaree a la ligne: " + line + " column: " + column);
+                        }
+                }
+                if(ctx.val()!=null){
+                        pile.add(ctx.val().getText());
+                }
+               /* if(ctx.val()==null ||ctx.ID()==null){
+                        errors.add("Erreur instruction if : l'operand doit etre une valeur ou un ID ");
+                }*/
+        }
 
 
+        @Override public void enterDowhile_inst(projetCompilParser.Dowhile_instContext ctx) {
+                sauvDebWile =quads.size();
+        }
 
-        @Override public void exitCond(projetCompilParser.CondContext ctx) { }
+        @Override public void exitDowhile_inst(projetCompilParser.Dowhile_instContext ctx) {
+                quads.getQuad(sauvCond).setQuad(1, String.valueOf(sauvDebWile));
+                quads.getQuad(sauvCond).setQuad(0,getBRinverse(quads.getQuad(sauvCond).getVal(0)));
 
-
-
-        @Override public void exitOp(projetCompilParser.OpContext ctx) { }
-
-
-        @Override public void exitDowhile_inst(projetCompilParser.Dowhile_instContext ctx) { }
-
+        }
 
 
         @Override public void exitRead(projetCompilParser.ReadContext ctx) { }
@@ -229,8 +272,7 @@ public class Listener extends projetCompilBaseListener{
 
         @Override public void exitListID(projetCompilParser.ListIDContext ctx) { }
 
-        @Override public void exitEveryRule(ParserRuleContext ctx) {
-        }
+        @Override public void exitEveryRule(ParserRuleContext ctx) { }
 
         @Override public void visitTerminal(TerminalNode node) { }
 
@@ -252,22 +294,22 @@ public class Listener extends projetCompilBaseListener{
 
 
         private boolean affectTypesCompatible(String premier, String second) {
-                if (premier.equals(entier)) {
-                        if (second.equals(entier)) {
+                if (premier == entier) {
+                        if (second == entier) {
                                 return true;
                         } else {
                                 System.out.println("types incompatibles");
                                 return false;
                         }
-                } else if (premier.equals(reel)) {
-                        if (second.equals(entier) || second.equals(reel)) {
+                } else if (premier == reel) {
+                        if (second == entier || second == reel) {
                                 return true;
                         } else {
                                 System.out.println("types incompatibles");
                                 return false;
                         }
-                } else if (premier.equals(chaine)) {
-                        if (second.equals(chaine)) {
+                } else if (premier == chaine) {
+                        if (second == chaine) {
                                 return true;
                         } else {
                                 System.out.println("types incompatibles");
@@ -279,7 +321,7 @@ public class Listener extends projetCompilBaseListener{
 
 
         private boolean TypesCompatible(String premier, String second) {
-                if ((premier.equals(entier) || premier.equals(reel)) && ((second.equals(entier) || second.equals(reel)))){
+                if ((premier == entier || premier == reel) && (second == entier || second == reel)){
                         return true;
                 }
                 return false;
@@ -289,14 +331,48 @@ public class Listener extends projetCompilBaseListener{
 
 
         private String getResultingType(String premier, String second) {
-                if (premier.equals(entier) && second.equals(entier )){
+                if (premier == entier && second == entier ){
                         return entier;
                 }
-                if (premier.equals(reel) || second.equals(reel)){
+                if (premier == reel || second == reel){
                         return reel;
                 }
                 return null;
         }
 
+        private static String getBR(String s)
+        {  switch (s) {
+                case "<":
+                        return "BGE";
+                case ">":
+                        return "BLE";
+                case "<=":
+                        return "BG";
+                case ">=":
+                        return "BL";
+                case "==":
+                        return "BNE";
+                case "!=":
+                        return "BE";
+        }
+                return null;
+        }
+        private String getBRinverse(String s) {
+                switch (s) {
+                        case "BGE":
+                                return "BL";
+                        case "BLE":
+                                return "BG";
+                        case "BG":
+                                return "BLE";
+                        case "BL":
+                                return "BGE";
+                        case "==":
+                                return "BE";
+                        case "!=":
+                                return "BNE";
+                }
+                return null;
+        }
     }
 

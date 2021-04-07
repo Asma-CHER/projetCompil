@@ -40,9 +40,14 @@ operand : ID //routine de verification de declaration
 val : INTEGERVAL | FLOATVAL | STRINGVAL |MINUS INTEGERVAL|MINUS FLOATVAL ;
 
 // instruction if
-ifinst : IF '(' cond ')' THEN '{' instsList '}'
-        |ELSE '{' instsList '}' ;
-cond : operand op operand ;
+ifinst : IF '(' cond ')' THEN '{' instsList '}' elseinst;
+elseinst : ELSE '{' instsList '}'
+        |
+        ;
+cond : operandif op operandif ;
+operandif : ID //routine de verification de declaration
+        | val
+        ;
 op : SUP | INF | SUPE | INFE | DIF | EQ;
 
 //instruction do_while
@@ -90,7 +95,7 @@ STRINGVAL : '.*';
 
 // ************ opérateurs **************//
 
-AFF : '=';
+AFF : ':=';
 PLUS : '+';
 MINUS : '-';
 MUL : '*';
