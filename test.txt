@@ -1,12 +1,13 @@
 compil NAMEPROG ()
 {
-intCompil term1, term2, a;
+intCompil term1, term2, a, c;
 floatCompil div;
 StringCompil chaine1;
 start
 
-term1=10;
-term2=a;
-term2=a*a;
-//term2=2;
+a = 10;
+term1 = 12;
+div = term1 +c;
+term1 = 5;
+term2 = term1 +6;
   }

@@ -7,12 +7,32 @@ public class TS
         String name;
         boolean declared;
         String type;
+        String value;
+        boolean initialise;
 
-        public Element(String name, boolean declared, String type) {
+        public Element(String name, boolean declared, String type, String value, boolean initialise) {
             this.name = name;
             this.declared = declared;
             this.type = type;
+            this.value = value;
+            this.initialise = initialise;
 
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        public void setValue(String value) {
+            this.value = value;
+        }
+
+        public boolean isInitialise() {
+            return initialise;
+        }
+
+        public void setInitialise(boolean initialise) {
+            this.initialise = initialise;
         }
 
         public String getName() {
@@ -45,6 +65,8 @@ public class TS
                     "name='" + name + '\'' +
                     ", declared=" + declared +
                     ", type='" + type + '\'' +
+                    ", value='" + value + '\'' +
+                    ", initialise=" + initialise +
                     '}';
         }
     }

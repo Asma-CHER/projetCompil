@@ -9,7 +9,8 @@ import java.util.LinkedList;
 import ANTLR.projetCompilBaseListener;
 public class Listener extends projetCompilBaseListener{
 
-        private int i;
+        private String v= null;
+        private boolean k =false;
 
         private String entier = "intCompil";
         private String reel = "floatCompil";
@@ -79,7 +80,7 @@ public class Listener extends projetCompilBaseListener{
                                 errors.add("Double declaration de la variable: " + varName+" a la ligne: "+line+" column: "+column);
                         }
                          else
-                                table.addElement(new TS.Element(varName,true, varType));
+                                table.addElement(new TS.Element(varName,true, varType, null, false));
                         if(vars.var() == null)
                                 return;
                 }
@@ -103,14 +104,21 @@ public class Listener extends projetCompilBaseListener{
                 int column = idToken.getCharPositionInLine()+1;
                 String id = ctx.getChild(0).getText();
 
-                        if (!affectTypesCompatible(table.getElement(ctx.ID().getText()).type, getCtxType(ctx.suite_operation())))
+                //System.out.println("le type est "+ getCtxType(ctx.suite_operation()));
+
+                if (table.getElement(ctx.ID().getText()) != null){
+                if (!affectTypesCompatible(table.getElement(ctx.ID().getText()).type, getCtxType(ctx.suite_operation())))
+
                         errors.add("incompatible types in affectation ligne : " + ctx.ID().getSymbol().getLine());
-                clearMap();
+                clearMap();}
 
                 if(table.containsElement(id)){
                         if(table.getElement(id).declared){
                                 quads.addQuad("=","exp","",id);
                                 //int sauv_temp = quads.size();
+                                table.getElement(id).setInitialise(true);
+                                table.getElement(id).setValue(v);
+
                         }else{
                                 errors.add("Variable: " + id+" non declaree a la ligne: "+line+" column: "+column);
                         }
@@ -120,8 +128,17 @@ public class Listener extends projetCompilBaseListener{
         }
 
         @Override public void exitSuite_operation(projetCompilParser.Suite_operationContext ctx) {
-                if(ctx.suite_operation() == null)
+
+
+                if(ctx.suite_operation() == null){
                         addCtxType(ctx,getCtxType(ctx.suite_operation2()));
+
+                /*for (int i=0; i< ctx.children.size(); i++){
+                        if (ctx.suite_operation().suite_operation2().operand().ID() !=null){
+                                System.out.println("affichage"+ ctx.children.get(i).getText());
+                        }
+
+                }*/}
                 else
                 {
                         if(TypesCompatible(getCtxType(ctx.suite_operation()),getCtxType(ctx.suite_operation2())))
@@ -153,7 +170,8 @@ public class Listener extends projetCompilBaseListener{
                 }}
 
              if ( ctx.val() != null){
-                     addCtxType(ctx, getCtxType(ctx.val()));}
+                     addCtxType(ctx, getCtxType(ctx.val()));
+             }
         }
 
         @Override
@@ -175,12 +193,15 @@ public class Listener extends projetCompilBaseListener{
         @Override public void exitVal(projetCompilParser.ValContext ctx) {
                 if (ctx.INTEGERVAL()!= null){
                         addCtxType(ctx, entier);
+                        v = String.valueOf(ctx.INTEGERVAL());
                 }
                 if (ctx.FLOATVAL()!= null){
                         addCtxType(ctx, reel);
+                        v = String.valueOf(ctx.FLOATVAL());
                 }
                 if (ctx.STRINGVAL()!= null){
                         addCtxType(ctx, chaine);
+                        v = String.valueOf(ctx.STRINGVAL());
                 }
 
         }
@@ -208,7 +229,8 @@ public class Listener extends projetCompilBaseListener{
 
         @Override public void exitListID(projetCompilParser.ListIDContext ctx) { }
 
-        @Override public void exitEveryRule(ParserRuleContext ctx) { }
+        @Override public void exitEveryRule(ParserRuleContext ctx) {
+        }
 
         @Override public void visitTerminal(TerminalNode node) { }
 
@@ -230,22 +252,22 @@ public class Listener extends projetCompilBaseListener{
 
 
         private boolean affectTypesCompatible(String premier, String second) {
-                if (premier == entier) {
-                        if (second == entier) {
+                if (premier.equals(entier)) {
+                        if (second.equals(entier)) {
                                 return true;
                         } else {
                                 System.out.println("types incompatibles");
                                 return false;
                         }
-                } else if (premier == reel) {
-                        if (second == entier || second == reel) {
+                } else if (premier.equals(reel)) {
+                        if (second.equals(entier) || second.equals(reel)) {
                                 return true;
                         } else {
                                 System.out.println("types incompatibles");
                                 return false;
                         }
-                } else if (premier == chaine) {
-                        if (second == chaine) {
+                } else if (premier.equals(chaine)) {
+                        if (second.equals(chaine)) {
                                 return true;
                         } else {
                                 System.out.println("types incompatibles");
@@ -257,7 +279,7 @@ public class Listener extends projetCompilBaseListener{
 
 
         private boolean TypesCompatible(String premier, String second) {
-                if ((premier == entier || premier == reel) && (second == entier || second == reel)){
+                if ((premier.equals(entier) || premier.equals(reel)) && ((second.equals(entier) || second.equals(reel)))){
                         return true;
                 }
                 return false;
@@ -267,10 +289,10 @@ public class Listener extends projetCompilBaseListener{
 
 
         private String getResultingType(String premier, String second) {
-                if (premier == entier && second == entier ){
+                if (premier.equals(entier) && second.equals(entier )){
                         return entier;
                 }
-                if (premier == reel || second == reel){
+                if (premier.equals(reel) || second.equals(reel)){
                         return reel;
                 }
                 return null;
