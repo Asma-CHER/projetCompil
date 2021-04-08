@@ -6,18 +6,17 @@ StringCompil chaine1;
 start
 
 
-c=5;
-a=10;
-term1 = term1 +a;
-b = 15;
+c:=5;
+a:=10;
+term1 := c+a*c;
+b := 15;
 if (a>b) then{
-a=b+c;
-b=10;}else{
-a=b+c;
+a:=b+c;
+b:=10;}else{
+a:=b+c;
 }
 if (a>10) then{
-term1=term2+term1;
-term2=term2+term1;
+
 }
-do{term1=c;}while(b<=c)
+do{term1:=10;}while(b<=c)
   }

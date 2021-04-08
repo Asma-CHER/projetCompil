@@ -18,7 +18,7 @@ public class Listener extends projetCompilBaseListener {
         private TS table = new TS();
         private Quads quads = new Quads();
         private LinkedList<String> errors = new LinkedList<>();
-        private QuadsGen quadsGen;
+        private LinkedList<AssembleurInst> codeObjet = new LinkedList<>();
         private HashMap<ParserRuleContext,String> types = new HashMap<>();
 
         //variable pour IF_instruction
@@ -48,6 +48,16 @@ public class Listener extends projetCompilBaseListener {
 
                         for (int i = 0; i < quads.size(); i++) {
                                 System.out.println(i+"-"+quads.getQuad(i).toString());
+                        }
+                        System.out.println("**************************************************************");
+
+                        CodeGenerator codeGenerator = new CodeGenerator(quads);
+                        codeObjet = codeGenerator.generateCode(quads);
+                        System.out.println("**************************************************************");
+                        System.out.println("********************** CODE OBJET *****************************");
+
+                        for (int i = 0; i < codeObjet.size(); i++) {
+                                System.out.println(codeObjet.get(i).toString());
                         }
                         System.out.println("**************************************************************");
 
@@ -90,7 +100,6 @@ public class Listener extends projetCompilBaseListener {
 
         }
 
-
         @Override public void exitType(projetCompilParser.TypeContext ctx) { }
 
         @Override public void exitVar(projetCompilParser.VarContext ctx) { }
@@ -106,22 +115,21 @@ public class Listener extends projetCompilBaseListener {
                 int line = idToken.getLine();
                 int column = idToken.getCharPositionInLine()+1;
                 String id = ctx.getChild(0).getText();
-
-                //System.out.println("le type est "+ getCtxType(ctx.suite_operation()));
+                System.out.println("HERE here hrer*************************");
+                for(int i=0;i<ctx.children.size();i++){
+                        System.out.println("HERE: "+ctx.children.get(i).getText());
+                }
 
                 if (table.getElement(ctx.ID().getText()) != null){
                         if (!affectTypesCompatible(table.getElement(ctx.ID().getText()).type, getCtxType(ctx.suite_operation())))
-
                                 errors.add("incompatible types in affectation ligne : " + ctx.ID().getSymbol().getLine());
                         clearMap();}
-
                 if(table.containsElement(id)){
                         if(table.getElement(id).declared){
-                                quads.addQuad("=","exp","",id);
+                                quads.addQuad("=","","exp",id);
                                 //int sauv_temp = quads.size();
                                 table.getElement(id).setInitialise(true);
                                 table.getElement(id).setValue(v);
-
                         }else{
                                 errors.add("Variable: " + id+" non declaree a la ligne: "+line+" column: "+column);
                         }
@@ -182,8 +190,7 @@ public class Listener extends projetCompilBaseListener {
                 }
         }
 
-        @Override
-        public void exitSuite_operation2(projetCompilParser.Suite_operation2Context ctx) {
+        @Override public void exitSuite_operation2(projetCompilParser.Suite_operation2Context ctx) {
                 if(ctx.suite_operation2() == null)
                         addCtxType(ctx,getCtxType(ctx.operand()));
                 else
@@ -219,15 +226,13 @@ public class Listener extends projetCompilBaseListener {
                 quads.getQuad(sauvCond-1).setQuad(1, String.valueOf(quads.size()));
         }
 
-        @Override
-        public void enterElseinst(projetCompilParser.ElseinstContext ctx) {
+        @Override public void enterElseinst(projetCompilParser.ElseinstContext ctx) {
                 quads.addQuad("BR", "","","");
                 sauvBR=quads.size();
                 quads.getQuad(sauvCond).setQuad(1, String.valueOf(quads.size()));
         }
 
-        @Override
-        public void exitElseinst(projetCompilParser.ElseinstContext ctx) {
+        @Override public void exitElseinst(projetCompilParser.ElseinstContext ctx) {
                quads.getQuad(sauvBR-1).setQuad(1, String.valueOf(quads.size()+1));
 
         }
@@ -246,8 +251,7 @@ public class Listener extends projetCompilBaseListener {
                 sauvCond = quads.size()-1;
         }
 
-        @Override
-        public void exitOperandif(projetCompilParser.OperandifContext ctx) {
+        @Override public void exitOperandif(projetCompilParser.OperandifContext ctx) {
                 if(ctx.ID()!=null) {
                         Token idToken = ctx.ID().getSymbol();
                         int line = idToken.getLine();
@@ -281,7 +285,6 @@ public class Listener extends projetCompilBaseListener {
                 }*/
         }
 
-
         @Override public void enterDowhile_inst(projetCompilParser.Dowhile_instContext ctx) {
                 sauvDebWile =quads.size();
         }
@@ -292,10 +295,7 @@ public class Listener extends projetCompilBaseListener {
 
         }
 
-
         @Override public void exitRead(projetCompilParser.ReadContext ctx) { }
-
-
 
         @Override public void exitWrite(projetCompilParser.WriteContext ctx) { }
 
@@ -306,8 +306,6 @@ public class Listener extends projetCompilBaseListener {
         @Override public void visitTerminal(TerminalNode node) { }
 
         @Override public void visitErrorNode(ErrorNode node) { }
-
-
 
         private void addCtxType(ParserRuleContext ctx, String type) {
                 types.put(ctx, type);
@@ -320,7 +318,6 @@ public class Listener extends projetCompilBaseListener {
         private void clearMap() {
                 types.clear();
         }
-
 
         private boolean affectTypesCompatible(String premier, String second) {
                 if (premier.equals(entier)) {
@@ -348,7 +345,6 @@ public class Listener extends projetCompilBaseListener {
                 return false;
         }
 
-
         private boolean TypesCompatible(String premier, String second) {
                 if ((premier.equals(entier) || premier.equals(reel)) && ((second.equals(entier) || second.equals(reel)))){
                         return true;
@@ -356,8 +352,6 @@ public class Listener extends projetCompilBaseListener {
                 return false;
 
         }
-
-
 
         private String getResultingType(String premier, String second) {
                 if (premier.equals(entier) && second.equals(entier )){

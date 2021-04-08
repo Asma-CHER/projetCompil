@@ -43,7 +43,7 @@ public class projetCompilParser extends Parser {
 			null, "'('", "')'", "'{'", "'}'", "';'", "','", "');'", null, "'compil'", 
 			"'intCompil'", "'floatCompil'", "'StringCompil'", "'scanCompil'", "'printCompil'", 
 			"'start'", "'if'", "'then'", "'else'", "'do'", "'while'", null, null, 
-			null, null, "'.*'", "'='", "'+'", "'-'", "'*'", "'/'", "'>'", "'<'", 
+			null, null, "'.*'", "':='", "'+'", "'-'", "'*'", "'/'", "'>'", "'<'", 
 			"'>='", "'<='", "'=='", "'!='"
 		};
 	}

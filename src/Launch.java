@@ -8,6 +8,7 @@ import java.io.IOException;
 import static org.antlr.v4.runtime.CharStreams.fromFileName;
 
 public class Launch {
+
     public static void main(String[] args){
         try{
             String source = "test.txt";
@@ -19,8 +20,6 @@ public class Launch {
 
             Listener listener = new Listener();
             ParseTreeWalker.DEFAULT.walk(listener, tree);
-
-
         }
         catch (IOException e ){
             e.printStackTrace();

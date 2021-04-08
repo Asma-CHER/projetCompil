@@ -1,9 +1,11 @@
 public class AssembleurInst {
+    String etiq;
     String inst;
     String op1;
     String op2;
 
-    public AssembleurInst(String inst, String op1, String op2) {
+    public AssembleurInst(String etiq,String inst, String op1, String op2) {
+        this.etiq=etiq;
         this.inst = inst;
         this.op1 = op1;
         this.op2 = op2;
@@ -11,5 +13,5 @@ public class AssembleurInst {
 
     @Override
     public String toString()
-    { return inst + " " + op1 + " " + op2; }
+    { return " "+etiq+" "+inst + " " + op1 + " " + op2; }
 }
