@@ -51,7 +51,7 @@ operandif : ID //routine de verification de declaration
 op : SUP | INF | SUPE | INFE | DIF | EQ;
 
 //instruction do_while
-dowhile_inst : DO '{' instsList '}' WHILE '(' cond ')' ;
+dowhile_inst : DO '{' instsList '}' WHILE '(' cond ')';
 
 // instruction read/write
 read :  SCAN '(' listIDR ');' ;
@@ -67,8 +67,9 @@ listID : ID ',' listID
 
 
 //**************Skip*******************//
-WS:[\n\t]+-> skip;
-ONELINE : '/''/'(.)* -> skip;
+WS:[\n\t\r]+-> skip;
+SPACE: [ ] -> skip;
+ONELINE : '/''/'(~[\n])* -> skip;
 MULLINE : '/*'(.)*?'*/' -> skip;
 
 //******************* Mots clés *******************//
@@ -94,12 +95,11 @@ INTEGERVAL : '0'|[1-9][0-9]*;
 FLOATVAL : '-'?[1-9][0-9]*('.'[0-9]*);
 NAMEPROG : [A-Z][a-zA-Z0-9]*;
 ID : [a-zA-Z][a-zA-Z0-9]*;
-STRINGVAL : '.*';
-
+STRINGVAL : '"'(~["]|'\\"')*'"';
 
 // ************ opérateurs **************//
 
-AFF : ':=';
+AFF : '=';
 PLUS : '+';
 MINUS : '-';
 MUL : '*';
