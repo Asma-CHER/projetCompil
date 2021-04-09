@@ -213,11 +213,11 @@ public class Listener extends projetCompilBaseListener {
                         addCtxType(ctx, getCtxType(ctx.operand()));
                 }
                 else
-                {       if(TypesCompatible(getCtxType(ctx.suite_operation2()),getCtxType(ctx.operand())))
-                        addCtxType(ctx,getResultingType(getCtxType(ctx.suite_operation2()),getCtxType(ctx.operand())));
-                else {
+                {       if(TypesCompatible(getCtxType(ctx.suite_operation2()),getCtxType(ctx.operand()))){
+                        addCtxType(ctx,getResultingType(getCtxType(ctx.suite_operation2()),getCtxType(ctx.operand())));}
+                        else {
                         addCtxType(ctx, null);
-                }
+                        }
                         cpt++;
                         String Res2 = null;
                         if (pileExp.size()>=2){
@@ -232,6 +232,7 @@ public class Listener extends projetCompilBaseListener {
                                 String p2 = pile2.removeLast();
 
                                 if (ctx.operateurM().DIV() != null) {
+                                        addCtxType(ctx, reel);
                                         if(p2.contains("\"")||p1.contains("\"")) {
 
                                         }else {
@@ -369,16 +370,41 @@ public class Listener extends projetCompilBaseListener {
         }
 
         @Override public void exitWrite(projetCompilParser.WriteContext ctx) {
-                ctx.chaine().STRINGVAL();
         }
 
         @Override public void exitChaine(projetCompilParser.ChaineContext ctx) {
-                ctx.STRINGVAL();
+
+                        if (ctx.STRINGVAL()!= null){
+                                String term = String.valueOf(ctx.STRINGVAL().getText());
+                                quads.addQuad("WRITE",term, "", "");
+                        }
+                        else{
+                                if(ctx.listID().ID()!=null) {
+                                        String term = ctx.listID().ID().getText();
+                                        if (table.containsElement(term)) {
+                                                if(table.getElement(term).isInitialise()){
+                                                        quads.addQuad("WRITE",term, "", "");
+                                                }
+                                                else{
+                                                        errors.add ("variable non initialisée à la ligne " + ctx.listID().ID().getSymbol().getLine());
+                                                }
+                                        }
+                                        else{
+                                                errors.add ("variable non déclarée à la ligne " + ctx.listID().ID().getSymbol().getLine());
+                                        }
+
+                                }
+                                else{
+                                        errors.add("Erreur syntaxique dans WRITE");
+                                }
+                        }
+
+
         }
 
 
         @Override public void exitListID(projetCompilParser.ListIDContext ctx) {
-                super.exitListID(ctx);
+
         }
 
         public boolean lookUP(projetCompilParser.OperandContext ctx){

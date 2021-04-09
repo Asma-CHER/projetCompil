@@ -27,5 +27,7 @@ if (a==b) then{
 u=5;
 }
 scanCompil(n,m,t,r);
+printCompil("hello world");
+printCompil(a);
 do{term1=10;}while(b<=c)
   }
