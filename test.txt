@@ -10,17 +10,18 @@ c:=5;
 a:=10;
 b:=1;
 term1:=2;
-term1 := c+a*v+b*term1;
+term1 := c+a*v/b*term1;
 term1:=c+b;
 term1:=a*v;
 b := 15;
 if (a>b) then{
 a:=b+c;
-b:=10;}else{
+b:=10;}
+else{
 a:=b+c;
 }
 if (a>10) then{
-
 }
+scanCompil(n,m,t,r);
 do{term1:=10;}while(b<=c)
   }

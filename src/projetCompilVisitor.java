@@ -58,13 +58,13 @@ public interface projetCompilVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitAffect(projetCompilParser.AffectContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link projetCompilParser#suite_operation}.
+	 * Visit a parse tree produced by {@link projetCompilParser#suite_operation()}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitSuite_operation(projetCompilParser.Suite_operationContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link projetCompilParser#suite_operation2}.
+	 * Visit a parse tree produced by {@link projetCompilParser#suite_operation2()}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
@@ -153,4 +153,10 @@ public interface projetCompilVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitListID(projetCompilParser.ListIDContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link projetCompilParser#listIDR}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitListIDR(projetCompilParser.ListIDRContext ctx);
 }

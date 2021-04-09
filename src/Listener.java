@@ -35,8 +35,7 @@ public class Listener extends projetCompilBaseListener {
                 return table;
         }
 
-        @Override
-        public void exitTinyLang(projetCompilParser.TinyLangContext ctx) {
+        @Override public void exitTinyLang(projetCompilParser.TinyLangContext ctx) {
                 if(errors.size() == 0) { // no errors
                         quads.addQuad("END","","","");
                         System.out.println("program compiled without errors!");
@@ -82,7 +81,6 @@ public class Listener extends projetCompilBaseListener {
 
                 projetCompilParser.VarContext vars = ctx.var();
                 String varType = ctx.type().getText(); //    String varType = ctx.getChild(0).getText();
-
                 Token idToken =ctx.var().ID().getSymbol(); //get symbole of child (the variable ID)
                 int line = idToken.getLine(); //get the ligne
                 int column = idToken.getCharPositionInLine()+1; //get the column
@@ -98,8 +96,6 @@ public class Listener extends projetCompilBaseListener {
                         if(vars.var() == null)
                                 return;
                 }
-
-
         }
 
         @Override public void exitType(projetCompilParser.TypeContext ctx) { }
@@ -117,10 +113,6 @@ public class Listener extends projetCompilBaseListener {
                 int line = idToken.getLine();
                 int column = idToken.getCharPositionInLine()+1;
                 String id = ctx.getChild(0).getText();
-                System.out.println("HERE here hreroperation*************************");
-                for(int i=0;i<pileExp.size();i++){
-                        System.out.println("HERE: "+pileExp.get(i));
-                }
                 if (table.getElement(ctx.ID().getText()) != null){
                         if (!affectTypesCompatible(table.getElement(ctx.ID().getText()).type, getCtxType(ctx.suite_operation())))
                                 errors.add("incompatible types in affectation ligne : " + ctx.ID().getSymbol().getLine());
@@ -181,22 +173,6 @@ public class Listener extends projetCompilBaseListener {
                 }
         }
 
-        public boolean lookUP(projetCompilParser.OperandContext ctx){
-                Token idToken =ctx.ID().getSymbol();
-                int line = idToken.getLine();
-                int column = idToken.getCharPositionInLine()+1;
-                String id = ctx.ID().getText();
-                if(table.containsElement(id)){
-                        if(table.getElement(id).declared){
-                                        return true;
-                        }else{
-                                errors.add("Variable: " + id+" non declaree a la ligne: "+line+" column: "+column);
-                        }
-                }else{
-                        errors.add("Variable: " + id+" non declaree a la ligne: "+line+" column: "+column);
-                }
-                return false;
-        }
         @Override public void exitSuite_operation2(projetCompilParser.Suite_operation2Context ctx) {
                 if(ctx.suite_operation2() == null) {
                         addCtxType(ctx, getCtxType(ctx.operand()));
@@ -307,17 +283,47 @@ public class Listener extends projetCompilBaseListener {
 
         }
 
-        @Override public void exitRead(projetCompilParser.ReadContext ctx) { }
+        @Override public void exitRead(projetCompilParser.ReadContext ctx) {
+
+        }
+
+        @Override public void exitListIDR(projetCompilParser.ListIDRContext ctx) {
+               if(ctx.ID()!=null) {
+                       String term = ctx.ID().getText();
+                       if (table.containsElement(term)) {
+                               table.getElement(term).setType("inputType");
+                               table.getElement(term).setValue("inputValue");
+                               table.getElement(term).setInitialise(true);
+                               table.getElement(term).setDeclared(true);
+                       } else {
+                               table.addElement(new TS.Element(term, true, "inputType", "inputValue", true));
+                       }
+                       quads.addQuad("READ", term, "", "");
+               }else{
+                       errors.add("Erreur syntaxique dans READ: la variable en entree doit etre un ID");
+               }
+        }
 
         @Override public void exitWrite(projetCompilParser.WriteContext ctx) { }
 
         @Override public void exitListID(projetCompilParser.ListIDContext ctx) { }
 
-        @Override public void exitEveryRule(ParserRuleContext ctx) { }
-
-        @Override public void visitTerminal(TerminalNode node) { }
-
-        @Override public void visitErrorNode(ErrorNode node) { }
+        public boolean lookUP(projetCompilParser.OperandContext ctx){
+                Token idToken =ctx.ID().getSymbol();
+                int line = idToken.getLine();
+                int column = idToken.getCharPositionInLine()+1;
+                String id = ctx.ID().getText();
+                if(table.containsElement(id)){
+                        if(table.getElement(id).declared){
+                                return true;
+                        }else{
+                                errors.add("Variable: " + id+" non declaree a la ligne: "+line+" column: "+column);
+                        }
+                }else{
+                        errors.add("Variable: " + id+" non declaree a la ligne: "+line+" column: "+column);
+                }
+                return false;
+        }
 
         private void addCtxType(ParserRuleContext ctx, String type) {
                 types.put(ctx, type);

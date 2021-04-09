@@ -54,12 +54,16 @@ op : SUP | INF | SUPE | INFE | DIF | EQ;
 dowhile_inst : DO '{' instsList '}' WHILE '(' cond ')' ;
 
 // instruction read/write
-read :  SCAN '(' listID ');' ;
+read :  SCAN '(' listIDR ');' ;
+listIDR : ID ',' listIDR
+        | ID ;
+
 write : PRINT '('chaine ');' ;
 chaine: listID
         | val;
 listID : ID ',' listID
         | ID ;
+
 
 
 
