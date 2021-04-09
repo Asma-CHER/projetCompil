@@ -15,6 +15,7 @@ public class Listener extends projetCompilBaseListener {
         private String reel = "floatCompil";
         private String chaine = "StringCompil";
         private LinkedList<String> pileExp = new LinkedList<>();
+        private LinkedList<String> pile2 = new LinkedList<>();
         private int cpt=0;
 
         private TS table = new TS();
@@ -35,7 +36,8 @@ public class Listener extends projetCompilBaseListener {
                 return table;
         }
 
-        @Override public void exitTinyLang(projetCompilParser.TinyLangContext ctx) {
+        @Override
+        public void exitTinyLang(projetCompilParser.TinyLangContext ctx) {
                 if(errors.size() == 0) { // no errors
                         quads.addQuad("END","","","");
                         System.out.println("program compiled without errors!");
@@ -81,6 +83,7 @@ public class Listener extends projetCompilBaseListener {
 
                 projetCompilParser.VarContext vars = ctx.var();
                 String varType = ctx.type().getText(); //    String varType = ctx.getChild(0).getText();
+
                 Token idToken =ctx.var().ID().getSymbol(); //get symbole of child (the variable ID)
                 int line = idToken.getLine(); //get the ligne
                 int column = idToken.getCharPositionInLine()+1; //get the column
@@ -96,6 +99,8 @@ public class Listener extends projetCompilBaseListener {
                         if(vars.var() == null)
                                 return;
                 }
+
+
         }
 
         @Override public void exitType(projetCompilParser.TypeContext ctx) { }
@@ -120,9 +125,11 @@ public class Listener extends projetCompilBaseListener {
                 if(table.containsElement(id)){
                         if(table.getElement(id).declared){
                                 String temp = pileExp.removeLast();
+                                String Res = pile2.removeLast();
                                 quads.addQuad("=","",temp,id);
                                 table.getElement(id).setInitialise(true);
-                                table.getElement(id).setValue(v);
+
+                                table.getElement(id).setValue(Res);
                         }else{
                                 errors.add("Variable: " + id+" non declaree a la ligne: "+line+" column: "+column);
                         }
@@ -143,24 +150,42 @@ public class Listener extends projetCompilBaseListener {
                                 addCtxType(ctx, null);
                         }
                         cpt++;
-                        String t1 = pileExp.removeLast();
-                        String t2 = pileExp.removeLast();
-                        String temp = "temp"+cpt;
-                        quads.addQuad(ctx.operateurP().getText(),t2,t1,temp);
-                        pileExp.add(temp);
+                        String Res;
+
+                        if(pileExp.size()>=2) {
+                                String t1 = pileExp.removeLast();
+                                String t2 = pileExp.removeLast();
+                                String temp = "temp" + cpt;
+
+                                quads.addQuad(ctx.operateurP().getText(), t2, t1, temp);
+                                pileExp.add(temp);
+                        }
+                        if (pile2.size()>=2) {
+                                String p1 = pile2.removeLast();
+                                String p2 = pile2.removeLast();
+                                if (ctx.operateurP().PLUS() != null) {
+                                        Res = String.valueOf(Float.valueOf(p2) + Float.valueOf(p1));
+                                        pile2.add(Res);
+                                } else {
+                                        Res = String.valueOf(Float.valueOf(p2) - Float.valueOf(p1));
+                                        pile2.add(Res);
+                                }
+                        }
                 }
         }
 
         @Override public void exitOperand(projetCompilParser.OperandContext ctx) {
                 if(ctx.ID()!=null){
-                        addCtxType(ctx, table.getElement(ctx.ID().getText()).type);
+
                         Token idToken =ctx.ID().getSymbol();
                         int line = idToken.getLine();
                         int column = idToken.getCharPositionInLine()+1;
                         String id = ctx.ID().getText();
                         if(lookUP(ctx)){
                                 if(table.getElement(id).isInitialise()) {
+                                        addCtxType(ctx, table.getElement(ctx.ID().getText()).type);
                                         pileExp.add(id);
+                                        pile2.add(table.getElement(id).getValue());
                                 }
                                 else {
                                         errors.add("Variable: " + id+" non initialisee a la ligne: "+line+" column: "+column);
@@ -170,6 +195,8 @@ public class Listener extends projetCompilBaseListener {
                 if ( ctx.val() != null){
                         addCtxType(ctx, getCtxType(ctx.val()));
                         pileExp.add(ctx.val().getText());
+                        pile2.add(ctx.val().getText());
+
                 }
         }
 
@@ -179,16 +206,39 @@ public class Listener extends projetCompilBaseListener {
                 }
                 else
                 {       if(TypesCompatible(getCtxType(ctx.suite_operation2()),getCtxType(ctx.operand())))
-                                addCtxType(ctx,getResultingType(getCtxType(ctx.suite_operation2()),getCtxType(ctx.operand())));
-                        else {
-                                addCtxType(ctx, null);
-                        }
+                        addCtxType(ctx,getResultingType(getCtxType(ctx.suite_operation2()),getCtxType(ctx.operand())));
+                else {
+                        addCtxType(ctx, null);
+                }
                         cpt++;
-                        String t1 = pileExp.removeLast();
-                        String t2 = pileExp.removeLast();
-                        String temp = "temp"+cpt;
-                        quads.addQuad(ctx.operateurM().getText(),t2,t1,temp);
-                        pileExp.add(temp);
+                        String Res2 = null;
+                        if (pileExp.size()>=2){
+                                String t1 = pileExp.removeLast();
+                                String t2 = pileExp.removeLast();
+                                String temp = "temp"+cpt;
+                                quads.addQuad(ctx.operateurM().getText(),t2,t1,temp);
+                                pileExp.add(temp);}
+
+                        if (pile2.size()>= 2 ) {
+                                String p1 = pile2.removeLast();
+                                String p2 = pile2.removeLast();
+
+                                if (ctx.operateurM().DIV() != null) {
+                                        if (Float.valueOf(p1) == 0) {
+                                                errors.add("La division par 0 n'est pas autorisée à la ligne " + ctx.operateurM().DIV().getSymbol().getLine());
+                                                pile2.add(Res2);
+                                        } else {
+                                                Res2 = String.valueOf(Float.valueOf(p2) / Float.valueOf(p1));
+                                                pile2.add(Res2);
+                                        }
+                                }
+                                else {
+                                        Res2 = String.valueOf(Float.valueOf(p2)* Float.valueOf(p1));
+                                        pile2.add(Res2);
+                                }
+                        }
+
+
                 }
 
         }
@@ -210,7 +260,7 @@ public class Listener extends projetCompilBaseListener {
         }
 
         @Override public void exitIfinst(projetCompilParser.IfinstContext ctx) {
-            //    quads.addQuad("BR", String.valueOf(quads.size()+1),"","");
+                //    quads.addQuad("BR", String.valueOf(quads.size()+1),"","");
                 quads.getQuad(sauvCond-1).setQuad(1, String.valueOf(quads.size()));
         }
 
@@ -221,7 +271,7 @@ public class Listener extends projetCompilBaseListener {
         }
 
         @Override public void exitElseinst(projetCompilParser.ElseinstContext ctx) {
-               quads.getQuad(sauvBR-1).setQuad(1, String.valueOf(quads.size()+1));
+                quads.getQuad(sauvBR-1).setQuad(1, String.valueOf(quads.size()+1));
 
         }
 
@@ -283,40 +333,35 @@ public class Listener extends projetCompilBaseListener {
 
         }
 
-        @Override public void exitRead(projetCompilParser.ReadContext ctx) {
-
-        }
+        @Override public void exitRead(projetCompilParser.ReadContext ctx) { }
 
         @Override public void exitListIDR(projetCompilParser.ListIDRContext ctx) {
-               if(ctx.ID()!=null) {
-                       String term = ctx.ID().getText();
-                       if (table.containsElement(term)) {
-                               table.getElement(term).setType("inputType");
-                               table.getElement(term).setValue("inputValue");
-                               table.getElement(term).setInitialise(true);
-                               table.getElement(term).setDeclared(true);
-                       } else {
-                               table.addElement(new TS.Element(term, true, "inputType", "inputValue", true));
-                       }
-                       quads.addQuad("READ", term, "", "");
-               }else{
-                       errors.add("Erreur syntaxique dans READ: la variable en entree doit etre un ID");
-               }
+                if(ctx.ID()!=null) {
+                        String term = ctx.ID().getText();
+                        if (table.containsElement(term)) {
+                                table.getElement(term).setType("inputType");
+                                table.getElement(term).setValue("inputValue");
+                                table.getElement(term).setInitialise(true);
+                                table.getElement(term).setDeclared(true);
+                        } else {
+                                table.addElement(new TS.Element(term, true, "inputType", "inputValue", true));
+                        }
+                        quads.addQuad("READ", term, "", "");
+                }else{
+                        errors.add("Erreur syntaxique dans READ: la variable en entree doit etre un ID");
+                }
         }
 
-        @Override
-        public void exitWrite(projetCompilParser.WriteContext ctx) {
+        @Override public void exitWrite(projetCompilParser.WriteContext ctx) {
                 ctx.chaine().STRINGVAL();
         }
 
-        @Override
-        public void exitChaine(projetCompilParser.ChaineContext ctx) {
+        @Override public void exitChaine(projetCompilParser.ChaineContext ctx) {
                 ctx.STRINGVAL();
         }
 
 
-        @Override
-        public void exitListID(projetCompilParser.ListIDContext ctx) {
+        @Override public void exitListID(projetCompilParser.ListIDContext ctx) {
                 super.exitListID(ctx);
         }
 
@@ -350,46 +395,64 @@ public class Listener extends projetCompilBaseListener {
         }
 
         private boolean affectTypesCompatible(String premier, String second) {
-                if (premier.equals(entier)) {
-                        if (second.equals(entier)) {
-                                return true;
-                        } else {
-                                System.out.println("types incompatibles");
-                                return false;
-                        }
-                } else if (premier.equals(reel)) {
-                        if (second.equals(entier) || second.equals(reel)) {
-                                return true;
-                        } else {
-                                System.out.println("types incompatibles");
-                                return false;
-                        }
-                } else if (premier.equals(chaine)) {
-                        if (second.equals(chaine)) {
-                                return true;
-                        } else {
-                                System.out.println("types incompatibles");
-                                return false;
+                if (premier == null || second == null){
+                        return false;
+                }
+                else {
+                        if (premier.equals(entier)) {
+                                if (second.equals(entier)) {
+                                        return true;
+                                } else {
+                                        System.out.println("types incompatibles");
+                                        return false;
+                                }
+                        } else if (premier.equals(reel)) {
+                                if (second.equals(entier) || second.equals(reel)) {
+                                        return true;
+                                } else {
+                                        System.out.println("types incompatibles");
+                                        return false;
+                                }
+                        } else if (premier.equals(chaine)) {
+                                if (second.equals(chaine)) {
+                                        return true;
+                                } else {
+                                        System.out.println("types incompatibles");
+                                        return false;
+                                }
                         }
                 }
                 return false;
         }
+
 
         private boolean TypesCompatible(String premier, String second) {
-                if ((premier.equals(entier) || premier.equals(reel)) && ((second.equals(entier) || second.equals(reel)))){
-                        return true;
+                if (premier == null || second == null){
+                        System.out.println("null affichage");
+                        return false;
+
                 }
+                else {if ((premier.equals(entier) || premier.equals(reel)) && ((second.equals(entier) || second.equals(reel)))){
+                        return true;
+                }}
+
                 return false;
 
         }
 
+
+
         private String getResultingType(String premier, String second) {
-                if (premier.equals(entier) && second.equals(entier )){
-                        return entier;
+                if (premier == null || second == null){
+                        return null;
                 }
-                if (premier.equals(reel) || second.equals(reel)){
-                        return reel;
-                }
+                else{
+                        if (premier.equals(entier) && second.equals(entier )){
+                                return entier;
+                        }
+                        if (premier.equals(reel) || second.equals(reel)){
+                                return reel;
+                        }}
                 return null;
         }
 
@@ -427,5 +490,5 @@ public class Listener extends projetCompilBaseListener {
                 }
                 return null;
         }
-    }
+}
 
