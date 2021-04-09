@@ -1,27 +1,30 @@
 compil NAMEPROG ()
 {
-intCompil term1, term2, a,b,c ,v;
+intCompil term1, term2, a,b,c ,v,u;
 floatCompil div;
-StringCompil chaine1;
+StringCompil chaine1, chaine2;
 start
 
-v:=2;
-c:=5;
-a:=10;
-b:=1;
-term1:=2;
-term1 := c+a*v/b*term1;
-term1:=c+b;
-term1:=a*v;
-b := 15;
+v=2;
+c=5;
+a=10;
+b=1;
+chaine1 = "racha";
+chaine2 = "racha";
+term1=2;
+//term1 = c+a*v/b*term1;
+/*term1=c+b;
+term1=a*v;*/
+b = 15;
 if (a>b) then{
-a:=b+c;
-b:=10;}
+a=b+c;
+b=10;}
 else{
-a:=b+c;
+a=b+c;
 }
-if (a>10) then{
+if (a==b) then{
+u=5;
 }
 scanCompil(n,m,t,r);
-do{term1:=10;}while(b<=c)
+do{term1=10;}while(b<=c)
   }

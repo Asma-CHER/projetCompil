@@ -124,12 +124,16 @@ public class Listener extends projetCompilBaseListener {
                         clearMap();}
                 if(table.containsElement(id)){
                         if(table.getElement(id).declared){
-                                String temp = pileExp.removeLast();
-                                String Res = pile2.removeLast();
-                                quads.addQuad("=","",temp,id);
                                 table.getElement(id).setInitialise(true);
+                                if(pileExp.size()>=1) {
+                                        String temp = pileExp.removeLast();
+                                        quads.addQuad("=", "", temp, id);
+                                }
+                                if(pile2.size()>=1) {
+                                        String Res = pile2.removeLast();
+                                        table.getElement(id).setValue(Res);
+                                }
 
-                                table.getElement(id).setValue(Res);
                         }else{
                                 errors.add("Variable: " + id+" non declaree a la ligne: "+line+" column: "+column);
                         }
@@ -163,12 +167,16 @@ public class Listener extends projetCompilBaseListener {
                         if (pile2.size()>=2) {
                                 String p1 = pile2.removeLast();
                                 String p2 = pile2.removeLast();
-                                if (ctx.operateurP().PLUS() != null) {
-                                        Res = String.valueOf(Float.valueOf(p2) + Float.valueOf(p1));
-                                        pile2.add(Res);
-                                } else {
-                                        Res = String.valueOf(Float.valueOf(p2) - Float.valueOf(p1));
-                                        pile2.add(Res);
+                                if(p2.contains("\"")||p1.contains("\"")) {
+
+                                }else {
+                                        if (ctx.operateurP().PLUS() != null) {
+                                                Res = String.valueOf(Float.valueOf(p2) + Float.valueOf(p1));
+                                                pile2.add(Res);
+                                        } else {
+                                                Res = String.valueOf(Float.valueOf(p2) - Float.valueOf(p1));
+                                                pile2.add(Res);
+                                        }
                                 }
                         }
                 }
@@ -224,17 +232,25 @@ public class Listener extends projetCompilBaseListener {
                                 String p2 = pile2.removeLast();
 
                                 if (ctx.operateurM().DIV() != null) {
-                                        if (Float.valueOf(p1) == 0) {
-                                                errors.add("La division par 0 n'est pas autorisée à la ligne " + ctx.operateurM().DIV().getSymbol().getLine());
-                                                pile2.add(Res2);
-                                        } else {
-                                                Res2 = String.valueOf(Float.valueOf(p2) / Float.valueOf(p1));
-                                                pile2.add(Res2);
+                                        if(p2.contains("\"")||p1.contains("\"")) {
+
+                                        }else {
+                                                if (Float.valueOf(p1) == 0) {
+                                                        errors.add("La division par 0 n'est pas autorisée à la ligne " + ctx.operateurM().DIV().getSymbol().getLine());
+                                                        pile2.add(Res2);
+                                                } else {
+                                                        Res2 = String.valueOf(Float.valueOf(p2) / Float.valueOf(p1));
+                                                        pile2.add(Res2);
+                                                }
                                         }
                                 }
                                 else {
-                                        Res2 = String.valueOf(Float.valueOf(p2)* Float.valueOf(p1));
-                                        pile2.add(Res2);
+                                        if(p2.contains("\"")||p1.contains("\"")) {
+
+                                        }else {
+                                                Res2 = String.valueOf(Float.valueOf(p2) * Float.valueOf(p1));
+                                                pile2.add(Res2);
+                                        }
                                 }
                         }
 
@@ -346,7 +362,7 @@ public class Listener extends projetCompilBaseListener {
                         } else {
                                 table.addElement(new TS.Element(term, true, "inputType", "inputValue", true));
                         }
-                        quads.addQuad("READ", term, "", "");
+                        quads.addQuad("READ",term, "", "");
                 }else{
                         errors.add("Erreur syntaxique dans READ: la variable en entree doit etre un ID");
                 }
