@@ -13,5 +13,5 @@ public class AssembleurInst {
 
     @Override
     public String toString()
-    { return " "+etiq+" "+inst + " " + op1 + " " + op2; }
+    { return " "+etiq+" "+inst + " " + op1 + "," + op2; }
 }

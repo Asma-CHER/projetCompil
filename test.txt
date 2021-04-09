@@ -17,8 +17,9 @@ term1=2;
 term1=a*v;*/
 b = 15;
 if (a>b) then{
+if (a>b) then{
 a=b+c;
-b=10;}
+b=10;}}
 else{
 a=b+c;
 }
