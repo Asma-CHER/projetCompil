@@ -54,18 +54,22 @@ op : SUP | INF | SUPE | INFE | DIF | EQ;
 dowhile_inst : DO '{' instsList '}' WHILE '(' cond ')' ;
 
 // instruction read/write
-read :  SCAN '(' listID ');' ;
+read :  SCAN '(' listIDR ');' ;
+listIDR : ID ',' listIDR
+        | ID ;
+
 write : PRINT '('chaine ');' ;
 chaine: listID
-        | val;
+        | STRINGVAL;
 listID : ID ',' listID
         | ID ;
 
 
 
 //**************Skip*******************//
-WS:[\n\t\r]+-> skip;
-//COMNT:  -> skip;
+WS:[\n\t]+-> skip;
+ONELINE : '/''/'(.)* -> skip;
+MULLINE : '/*'(.)*?'*/' -> skip;
 
 //******************* Mots clés *******************//
 

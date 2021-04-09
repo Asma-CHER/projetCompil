@@ -87,22 +87,22 @@ public interface projetCompilListener extends ParseTreeListener {
 	 */
 	void exitAffect(projetCompilParser.AffectContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link projetCompilParser#suite_operation}.
+	 * Enter a parse tree produced by {@link projetCompilParser#suite_operation()}.
 	 * @param ctx the parse tree
 	 */
 	void enterSuite_operation(projetCompilParser.Suite_operationContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link projetCompilParser#suite_operation}.
+	 * Exit a parse tree produced by {@link projetCompilParser#suite_operation()}.
 	 * @param ctx the parse tree
 	 */
 	void exitSuite_operation(projetCompilParser.Suite_operationContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link projetCompilParser#suite_operation2}.
+	 * Enter a parse tree produced by {@link projetCompilParser#suite_operation2()}.
 	 * @param ctx the parse tree
 	 */
 	void enterSuite_operation2(projetCompilParser.Suite_operation2Context ctx);
 	/**
-	 * Exit a parse tree produced by {@link projetCompilParser#suite_operation2}.
+	 * Exit a parse tree produced by {@link projetCompilParser#suite_operation2()}.
 	 * @param ctx the parse tree
 	 */
 	void exitSuite_operation2(projetCompilParser.Suite_operation2Context ctx);
@@ -216,6 +216,16 @@ public interface projetCompilListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitRead(projetCompilParser.ReadContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link projetCompilParser#listIDR}.
+	 * @param ctx the parse tree
+	 */
+	void enterListIDR(projetCompilParser.ListIDRContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link projetCompilParser#listIDR}.
+	 * @param ctx the parse tree
+	 */
+	void exitListIDR(projetCompilParser.ListIDRContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link projetCompilParser#write}.
 	 * @param ctx the parse tree
