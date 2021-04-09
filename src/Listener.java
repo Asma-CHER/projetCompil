@@ -214,10 +214,10 @@ public class Listener extends projetCompilBaseListener {
                 }
                 else
                 {       if(TypesCompatible(getCtxType(ctx.suite_operation2()),getCtxType(ctx.operand())))
-                        addCtxType(ctx,getResultingType(getCtxType(ctx.suite_operation2()),getCtxType(ctx.operand())));
-                else {
-                        addCtxType(ctx, null);
-                }
+                                addCtxType(ctx,getResultingType(getCtxType(ctx.suite_operation2()),getCtxType(ctx.operand())));
+                          else {
+                                  addCtxType(ctx, null);
+                        }
                         cpt++;
                         String Res2 = null;
                         if (pileExp.size()>=2){
@@ -235,6 +235,7 @@ public class Listener extends projetCompilBaseListener {
                                         if(p2.contains("\"")||p1.contains("\"")) {
 
                                         }else {
+                                                //addCtxType(ctx,reel);
                                                 if (Float.valueOf(p1) == 0) {
                                                         errors.add("La division par 0 n'est pas autorisée à la ligne " + ctx.operateurM().DIV().getSymbol().getLine());
                                                         pile2.add(Res2);

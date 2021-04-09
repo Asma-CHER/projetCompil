@@ -72,8 +72,7 @@ SPACE: [ ] -> skip;
 ONELINE : '/''/'(~[\n])* -> skip;
 MULLINE : '/*'(.)*?'*/' -> skip;
 
-//******************* Mots clés *******************//
-
+//*** Mots clés ***//
 COMPIL :'compil';
 INT : 'intCompil';
 FLOAT : 'floatCompil';
@@ -88,9 +87,7 @@ DO : 'do';
 WHILE : 'while';
 
 
-//*********** Valeurs ******************* //
-
-
+//*********** Valeurs ***************** //
 INTEGERVAL : '0'|[1-9][0-9]*;
 FLOATVAL : '-'?[1-9][0-9]*('.'[0-9]*);
 NAMEPROG : [A-Z][a-zA-Z0-9]*;
@@ -98,12 +95,14 @@ ID : [a-zA-Z][a-zA-Z0-9]*;
 STRINGVAL : '"'(~["]|'\\"')*'"';
 
 // ************ opérateurs **************//
-
+//*Arithmetique*//
 AFF : '=';
 PLUS : '+';
 MINUS : '-';
 MUL : '*';
 DIV : '/';
+
+//*Logique*//
 SUP : '>';
 INF : '<';
 SUPE : '>=';
