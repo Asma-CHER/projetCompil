@@ -60,16 +60,16 @@ listIDR : ID ',' listIDR
 
 write : PRINT '('chaine ');' ;
 chaine: listID
-        | val;
+        | STRINGVAL;
 listID : ID ',' listID
         | ID ;
 
 
 
-
 //**************Skip*******************//
-WS:[\n\t\r]+-> skip;
-//COMNT:  -> skip;
+WS:[\n\t]+-> skip;
+ONELINE : '/''/'(.)* -> skip;
+MULLINE : '/*'(.)*?'*/' -> skip;
 
 //******************* Mots clés *******************//
 

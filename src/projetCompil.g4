@@ -66,10 +66,10 @@ listID : ID ',' listID
 
 
 
-
 //**************Skip*******************//
-WS:[\n\t\r]+-> skip;
-//COMNT:  -> skip;
+WS:[\n\t]+-> skip;
+ONELINE : '/''/'(.)* -> skip;
+MULLINE : '/*'(.)*?'*/' -> skip;
 
 //******************* Mots clés *******************//
 
