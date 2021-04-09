@@ -14,6 +14,7 @@ public class Listener extends projetCompilBaseListener {
         private String entier = "intCompil";
         private String reel = "floatCompil";
         private String chaine = "StringCompil";
+        private LinkedList<String> pileExp = new LinkedList<>();
 
         private TS table = new TS();
         private Quads quads = new Quads();
@@ -115,11 +116,15 @@ public class Listener extends projetCompilBaseListener {
                 int line = idToken.getLine();
                 int column = idToken.getCharPositionInLine()+1;
                 String id = ctx.getChild(0).getText();
-                System.out.println("HERE here hrer*************************");
+                /*System.out.println("HERE here hrer*************************");
                 for(int i=0;i<ctx.children.size();i++){
                         System.out.println("HERE: "+ctx.children.get(i).getText());
+                }*/
+                System.out.println("HERE here hreroperation*************************");
+                for(int i=0;i<pileExp.size();i++){
+                        System.out.println("HERE: "+pileExp.get(i));
                 }
-
+                pileExp.clear();
                 if (table.getElement(ctx.ID().getText()) != null){
                         if (!affectTypesCompatible(table.getElement(ctx.ID().getText()).type, getCtxType(ctx.suite_operation())))
                                 errors.add("incompatible types in affectation ligne : " + ctx.ID().getSymbol().getLine());
@@ -157,50 +162,71 @@ public class Listener extends projetCompilBaseListener {
                         else {
                                 addCtxType(ctx, null);
                         }
+                        String t1 = pileExp.removeLast();
+                        String t2 = pileExp.removeLast();
+                        quads.addQuad(ctx.operateurP().getText(),t2,t1,"tempPLUS");
+                        pileExp.add("tempPLUS");
+
 
                 }
         }
 
         @Override public void exitOperand(projetCompilParser.OperandContext ctx) {
-
                 if(ctx.ID()!=null){
                         addCtxType(ctx, table.getElement(ctx.ID().getText()).type);
                         Token idToken =ctx.ID().getSymbol();
                         int line = idToken.getLine();
                         int column = idToken.getCharPositionInLine()+1;
                         String id = ctx.ID().getText();
-                        if(table.containsElement(id)){
-                                if(table.getElement(id).declared){
-                                        if(table.getElement(id).isInitialise()) {
-                                                quads.addQuad("+", "", id, "expA");
-                                                int sauv_temp = quads.size();
-                                        }
-                                        else {
-                                                errors.add("Variable: " + id+" non initialisee a la ligne: "+line+" column: "+column);
-                                        }
-                                }else{
-                                        errors.add("Variable: " + id+" non declaree a la ligne: "+line+" column: "+column);
+                        if(lookUP(ctx)){
+                                if(table.getElement(id).isInitialise()) {
+                                        pileExp.add(id);
                                 }
-                        }else{
-                                errors.add("Variable: " + id+" non declaree a la ligne: "+line+" column: "+column);
-                        }}
-
+                                else {
+                                        errors.add("Variable: " + id+" non initialisee a la ligne: "+line+" column: "+column);
+                                }
+                        }
+                }
                 if ( ctx.val() != null){
                         addCtxType(ctx, getCtxType(ctx.val()));
+                        pileExp.add(ctx.val().getText());
                 }
         }
 
+        public boolean lookUP(projetCompilParser.OperandContext ctx){
+                Token idToken =ctx.ID().getSymbol();
+                int line = idToken.getLine();
+                int column = idToken.getCharPositionInLine()+1;
+                String id = ctx.ID().getText();
+                if(table.containsElement(id)){
+                        if(table.getElement(id).declared){
+                                        return true;
+                        }else{
+                                errors.add("Variable: " + id+" non declaree a la ligne: "+line+" column: "+column);
+                        }
+                }else{
+                        errors.add("Variable: " + id+" non declaree a la ligne: "+line+" column: "+column);
+                }
+                return false;
+        }
         @Override public void exitSuite_operation2(projetCompilParser.Suite_operation2Context ctx) {
-                if(ctx.suite_operation2() == null)
-                        addCtxType(ctx,getCtxType(ctx.operand()));
+                if(ctx.suite_operation2() == null) {
+                        addCtxType(ctx, getCtxType(ctx.operand()));
+                        //quads.addQuad("*", "var", "suiteopert2null","");
+                }
                 else
                 {
+                        //quads.addQuad("*", "var", "suiteopert2notnull","");
                         if(TypesCompatible(getCtxType(ctx.suite_operation2()),getCtxType(ctx.operand())))
                                 addCtxType(ctx,getResultingType(getCtxType(ctx.suite_operation2()),getCtxType(ctx.operand())));
                         else {
                                 addCtxType(ctx, null);
                         }
 
+                        String t1 = pileExp.removeLast();
+                        String t2 = pileExp.removeLast();
+                        quads.addQuad(ctx.operateurM().getText(),t2,t1,"temp");
+                        pileExp.add("temp");
                 }
 
         }
