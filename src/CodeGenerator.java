@@ -25,6 +25,7 @@ public class CodeGenerator {
         typeMap.put("END","BRANCH");
         typeMap.put("READ","INPUT");
         typeMap.put("WRITE","OUTPUT");
+        typeMap.put("END","END");
         this.quads = quads;
     }
 
@@ -46,7 +47,12 @@ public class CodeGenerator {
             case "BRANCH": branchGen(quad,index);break;
             case "INPUT": inputGen(quad,index);break;
             case "OUTPUT": outputGen(quad,index);break;
+            case "END":endGen(quad,index); break;
         }
+    }
+
+    private void endGen(QuadElement quad, int index) {
+        insts.add(new AssembleurInst(String.valueOf(index),"END","",""));
     }
 
     private void branchBRGen(QuadElement quad, int index) {
