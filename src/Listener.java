@@ -304,9 +304,21 @@ public class Listener extends projetCompilBaseListener {
                }
         }
 
-        @Override public void exitWrite(projetCompilParser.WriteContext ctx) { }
+        @Override
+        public void exitWrite(projetCompilParser.WriteContext ctx) {
+                ctx.chaine().STRINGVAL();
+        }
 
-        @Override public void exitListID(projetCompilParser.ListIDContext ctx) { }
+        @Override
+        public void exitChaine(projetCompilParser.ChaineContext ctx) {
+                ctx.STRINGVAL();
+        }
+
+
+        @Override
+        public void exitListID(projetCompilParser.ListIDContext ctx) {
+                super.exitListID(ctx);
+        }
 
         public boolean lookUP(projetCompilParser.OperandContext ctx){
                 Token idToken =ctx.ID().getSymbol();

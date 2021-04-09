@@ -60,7 +60,7 @@ listIDR : ID ',' listIDR
 
 write : PRINT '('chaine ');' ;
 chaine: listID
-        | val;
+        | STRINGVAL;
 listID : ID ',' listID
         | ID ;
 

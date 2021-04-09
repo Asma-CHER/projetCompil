@@ -217,6 +217,16 @@ public interface projetCompilListener extends ParseTreeListener {
 	 */
 	void exitRead(projetCompilParser.ReadContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link projetCompilParser#listIDR}.
+	 * @param ctx the parse tree
+	 */
+	void enterListIDR(projetCompilParser.ListIDRContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link projetCompilParser#listIDR}.
+	 * @param ctx the parse tree
+	 */
+	void exitListIDR(projetCompilParser.ListIDRContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link projetCompilParser#write}.
 	 * @param ctx the parse tree
 	 */
@@ -246,14 +256,4 @@ public interface projetCompilListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitListID(projetCompilParser.ListIDContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link projetCompilParser#listIDR}.
-	 * @param ctx the parse tree
-	 */
-	void enterListIDR(projetCompilParser.ListIDRContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link projetCompilParser#listIDR}.
-	 * @param ctx the parse tree
-	 */
-	void exitListIDR(projetCompilParser.ListIDRContext ctx);
 }

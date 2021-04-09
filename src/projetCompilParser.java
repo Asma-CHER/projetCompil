@@ -27,13 +27,14 @@ public class projetCompilParser extends Parser {
 		RULE_suite_operation2 = 9, RULE_operateurP = 10, RULE_operateurM = 11, 
 		RULE_operand = 12, RULE_val = 13, RULE_ifinst = 14, RULE_elseinst = 15, 
 		RULE_cond = 16, RULE_operandif = 17, RULE_op = 18, RULE_dowhile_inst = 19, 
-		RULE_read = 20, RULE_write = 21, RULE_chaine = 22, RULE_listID = 23, RULE_listIDR = 24;
+		RULE_read = 20, RULE_listIDR = 21, RULE_write = 22, RULE_chaine = 23, 
+		RULE_listID = 24;
 	private static String[] makeRuleNames() {
 		return new String[] {
 			"tinyLang", "decList", "dec", "type", "var", "instsList", "inst", "affect", 
 			"suite_operation", "suite_operation2", "operateurP", "operateurM", "operand", 
 			"val", "ifinst", "elseinst", "cond", "operandif", "op", "dowhile_inst", 
-			"read", "write", "chaine", "listID", "listIDR"
+			"read", "listIDR", "write", "chaine", "listID"
 		};
 	}
 	public static final String[] ruleNames = makeRuleNames();
@@ -1480,6 +1481,68 @@ public class projetCompilParser extends Parser {
 		return _localctx;
 	}
 
+	public static class ListIDRContext extends ParserRuleContext {
+		public TerminalNode ID() { return getToken(projetCompilParser.ID, 0); }
+		public ListIDRContext listIDR() {
+			return getRuleContext(ListIDRContext.class,0);
+		}
+		public ListIDRContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_listIDR; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof projetCompilListener ) ((projetCompilListener)listener).enterListIDR(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof projetCompilListener ) ((projetCompilListener)listener).exitListIDR(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof projetCompilVisitor ) return ((projetCompilVisitor<? extends T>)visitor).visitListIDR(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+
+	public final ListIDRContext listIDR() throws RecognitionException {
+		ListIDRContext _localctx = new ListIDRContext(_ctx, getState());
+		enterRule(_localctx, 42, RULE_listIDR);
+		try {
+			setState(190);
+			_errHandler.sync(this);
+			switch ( getInterpreter().adaptivePredict(_input,10,_ctx) ) {
+			case 1:
+				enterOuterAlt(_localctx, 1);
+				{
+				setState(186);
+				match(ID);
+				setState(187);
+				match(T__5);
+				setState(188);
+				listIDR();
+				}
+				break;
+			case 2:
+				enterOuterAlt(_localctx, 2);
+				{
+				setState(189);
+				match(ID);
+				}
+				break;
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
 	public static class WriteContext extends ParserRuleContext {
 		public TerminalNode PRINT() { return getToken(projetCompilParser.PRINT, 0); }
 		public ChaineContext chaine() {
@@ -1506,17 +1569,17 @@ public class projetCompilParser extends Parser {
 
 	public final WriteContext write() throws RecognitionException {
 		WriteContext _localctx = new WriteContext(_ctx, getState());
-		enterRule(_localctx, 42, RULE_write);
+		enterRule(_localctx, 44, RULE_write);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(186);
+			setState(192);
 			match(PRINT);
-			setState(187);
+			setState(193);
 			match(T__0);
-			setState(188);
+			setState(194);
 			chaine();
-			setState(189);
+			setState(195);
 			match(T__6);
 			}
 		}
@@ -1535,9 +1598,7 @@ public class projetCompilParser extends Parser {
 		public ListIDContext listID() {
 			return getRuleContext(ListIDContext.class,0);
 		}
-		public ValContext val() {
-			return getRuleContext(ValContext.class,0);
-		}
+		public TerminalNode STRINGVAL() { return getToken(projetCompilParser.STRINGVAL, 0); }
 		public ChaineContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -1559,26 +1620,23 @@ public class projetCompilParser extends Parser {
 
 	public final ChaineContext chaine() throws RecognitionException {
 		ChaineContext _localctx = new ChaineContext(_ctx, getState());
-		enterRule(_localctx, 44, RULE_chaine);
+		enterRule(_localctx, 46, RULE_chaine);
 		try {
-			setState(193);
+			setState(199);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case ID:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(191);
+				setState(197);
 				listID();
 				}
 				break;
-			case INTEGERVAL:
-			case FLOATVAL:
 			case STRINGVAL:
-			case MINUS:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(192);
-				val();
+				setState(198);
+				match(STRINGVAL);
 				}
 				break;
 			default:
@@ -1622,69 +1680,7 @@ public class projetCompilParser extends Parser {
 
 	public final ListIDContext listID() throws RecognitionException {
 		ListIDContext _localctx = new ListIDContext(_ctx, getState());
-		enterRule(_localctx, 46, RULE_listID);
-		try {
-			setState(199);
-			_errHandler.sync(this);
-			switch ( getInterpreter().adaptivePredict(_input,11,_ctx) ) {
-			case 1:
-				enterOuterAlt(_localctx, 1);
-				{
-				setState(195);
-				match(ID);
-				setState(196);
-				match(T__5);
-				setState(197);
-				listID();
-				}
-				break;
-			case 2:
-				enterOuterAlt(_localctx, 2);
-				{
-				setState(198);
-				match(ID);
-				}
-				break;
-			}
-		}
-		catch (RecognitionException re) {
-			_localctx.exception = re;
-			_errHandler.reportError(this, re);
-			_errHandler.recover(this, re);
-		}
-		finally {
-			exitRule();
-		}
-		return _localctx;
-	}
-
-	public static class ListIDRContext extends ParserRuleContext {
-		public TerminalNode ID() { return getToken(projetCompilParser.ID, 0); }
-		public ListIDRContext listIDR() {
-			return getRuleContext(ListIDRContext.class,0);
-		}
-		public ListIDRContext(ParserRuleContext parent, int invokingState) {
-			super(parent, invokingState);
-		}
-		@Override public int getRuleIndex() { return RULE_listIDR; }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof projetCompilListener ) ((projetCompilListener)listener).enterListIDR(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof projetCompilListener ) ((projetCompilListener)listener).exitListIDR(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof projetCompilVisitor ) return ((projetCompilVisitor<? extends T>)visitor).visitListIDR(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-
-	public final ListIDRContext listIDR() throws RecognitionException {
-		ListIDRContext _localctx = new ListIDRContext(_ctx, getState());
-		enterRule(_localctx, 48, RULE_listIDR);
+		enterRule(_localctx, 48, RULE_listID);
 		try {
 			setState(205);
 			_errHandler.sync(this);
@@ -1697,7 +1693,7 @@ public class projetCompilParser extends Parser {
 				setState(202);
 				match(T__5);
 				setState(203);
-				listIDR();
+				listID();
 				}
 				break;
 			case 2:
@@ -1758,23 +1754,23 @@ public class projetCompilParser extends Parser {
 		"\3\17\5\17\u0091\n\17\3\20\3\20\3\20\3\20\3\20\3\20\3\20\3\20\3\20\3\20"+
 		"\3\21\3\21\3\21\3\21\3\21\3\21\5\21\u00a3\n\21\3\22\3\22\3\22\3\22\3\23"+
 		"\3\23\5\23\u00ab\n\23\3\24\3\24\3\25\3\25\3\25\3\25\3\25\3\25\3\25\3\25"+
-		"\3\25\3\26\3\26\3\26\3\26\3\26\3\27\3\27\3\27\3\27\3\27\3\30\3\30\5\30"+
-		"\u00c4\n\30\3\31\3\31\3\31\3\31\5\31\u00ca\n\31\3\32\3\32\3\32\3\32\5"+
-		"\32\u00d0\n\32\3\32\2\4\22\24\33\2\4\6\b\n\f\16\20\22\24\26\30\32\34\36"+
-		" \"$&(*,.\60\62\2\6\3\2\f\16\3\2\35\36\3\2\37 \3\2!&\2\u00ce\2\64\3\2"+
-		"\2\2\4D\3\2\2\2\6F\3\2\2\2\bJ\3\2\2\2\nP\3\2\2\2\fW\3\2\2\2\16^\3\2\2"+
-		"\2\20`\3\2\2\2\22e\3\2\2\2\24q\3\2\2\2\26}\3\2\2\2\30\177\3\2\2\2\32\u0087"+
+		"\3\25\3\26\3\26\3\26\3\26\3\26\3\27\3\27\3\27\3\27\5\27\u00c1\n\27\3\30"+
+		"\3\30\3\30\3\30\3\30\3\31\3\31\5\31\u00ca\n\31\3\32\3\32\3\32\3\32\5\32"+
+		"\u00d0\n\32\3\32\2\4\22\24\33\2\4\6\b\n\f\16\20\22\24\26\30\32\34\36 "+
+		"\"$&(*,.\60\62\2\6\3\2\f\16\3\2\35\36\3\2\37 \3\2!&\2\u00ce\2\64\3\2\2"+
+		"\2\4D\3\2\2\2\6F\3\2\2\2\bJ\3\2\2\2\nP\3\2\2\2\fW\3\2\2\2\16^\3\2\2\2"+
+		"\20`\3\2\2\2\22e\3\2\2\2\24q\3\2\2\2\26}\3\2\2\2\30\177\3\2\2\2\32\u0087"+
 		"\3\2\2\2\34\u0090\3\2\2\2\36\u0092\3\2\2\2 \u00a2\3\2\2\2\"\u00a4\3\2"+
-		"\2\2$\u00aa\3\2\2\2&\u00ac\3\2\2\2(\u00ae\3\2\2\2*\u00b7\3\2\2\2,\u00bc"+
-		"\3\2\2\2.\u00c3\3\2\2\2\60\u00c9\3\2\2\2\62\u00cf\3\2\2\2\64\65\7\13\2"+
+		"\2\2$\u00aa\3\2\2\2&\u00ac\3\2\2\2(\u00ae\3\2\2\2*\u00b7\3\2\2\2,\u00c0"+
+		"\3\2\2\2.\u00c2\3\2\2\2\60\u00c9\3\2\2\2\62\u00cf\3\2\2\2\64\65\7\13\2"+
 		"\2\65\66\7\31\2\2\66\67\7\3\2\2\678\7\4\2\289\7\5\2\29:\5\4\3\2:;\7\21"+
 		"\2\2;<\5\f\7\2<=\7\6\2\2=>\7\2\2\3>\3\3\2\2\2?@\5\6\4\2@A\5\4\3\2AE\3"+
 		"\2\2\2BE\5\6\4\2CE\3\2\2\2D?\3\2\2\2DB\3\2\2\2DC\3\2\2\2E\5\3\2\2\2FG"+
 		"\5\b\5\2GH\5\n\6\2HI\7\7\2\2I\7\3\2\2\2JK\t\2\2\2K\t\3\2\2\2LM\7\32\2"+
 		"\2MN\7\b\2\2NQ\5\n\6\2OQ\7\32\2\2PL\3\2\2\2PO\3\2\2\2Q\13\3\2\2\2RS\5"+
 		"\16\b\2ST\5\f\7\2TX\3\2\2\2UX\5\16\b\2VX\3\2\2\2WR\3\2\2\2WU\3\2\2\2W"+
-		"V\3\2\2\2X\r\3\2\2\2Y_\5\20\t\2Z_\5\36\20\2[_\5(\25\2\\_\5*\26\2]_\5,"+
-		"\27\2^Y\3\2\2\2^Z\3\2\2\2^[\3\2\2\2^\\\3\2\2\2^]\3\2\2\2_\17\3\2\2\2`"+
+		"V\3\2\2\2X\r\3\2\2\2Y_\5\20\t\2Z_\5\36\20\2[_\5(\25\2\\_\5*\26\2]_\5."+
+		"\30\2^Y\3\2\2\2^Z\3\2\2\2^[\3\2\2\2^\\\3\2\2\2^]\3\2\2\2_\17\3\2\2\2`"+
 		"a\7\32\2\2ab\7\34\2\2bc\5\22\n\2cd\7\7\2\2d\21\3\2\2\2ef\b\n\1\2fg\5\24"+
 		"\13\2gn\3\2\2\2hi\f\4\2\2ij\5\26\f\2jk\5\24\13\2km\3\2\2\2lh\3\2\2\2m"+
 		"p\3\2\2\2nl\3\2\2\2no\3\2\2\2o\23\3\2\2\2pn\3\2\2\2qr\b\13\1\2rs\5\32"+
@@ -1798,15 +1794,15 @@ public class projetCompilParser extends Parser {
 		"\u00ad\t\5\2\2\u00ad\'\3\2\2\2\u00ae\u00af\7\25\2\2\u00af\u00b0\7\5\2"+
 		"\2\u00b0\u00b1\5\f\7\2\u00b1\u00b2\7\6\2\2\u00b2\u00b3\7\26\2\2\u00b3"+
 		"\u00b4\7\3\2\2\u00b4\u00b5\5\"\22\2\u00b5\u00b6\7\4\2\2\u00b6)\3\2\2\2"+
-		"\u00b7\u00b8\7\17\2\2\u00b8\u00b9\7\3\2\2\u00b9\u00ba\5\62\32\2\u00ba"+
-		"\u00bb\7\t\2\2\u00bb+\3\2\2\2\u00bc\u00bd\7\20\2\2\u00bd\u00be\7\3\2\2"+
-		"\u00be\u00bf\5.\30\2\u00bf\u00c0\7\t\2\2\u00c0-\3\2\2\2\u00c1\u00c4\5"+
-		"\60\31\2\u00c2\u00c4\5\34\17\2\u00c3\u00c1\3\2\2\2\u00c3\u00c2\3\2\2\2"+
-		"\u00c4/\3\2\2\2\u00c5\u00c6\7\32\2\2\u00c6\u00c7\7\b\2\2\u00c7\u00ca\5"+
-		"\60\31\2\u00c8\u00ca\7\32\2\2\u00c9\u00c5\3\2\2\2\u00c9\u00c8\3\2\2\2"+
-		"\u00ca\61\3\2\2\2\u00cb\u00cc\7\32\2\2\u00cc\u00cd\7\b\2\2\u00cd\u00d0"+
-		"\5\62\32\2\u00ce\u00d0\7\32\2\2\u00cf\u00cb\3\2\2\2\u00cf\u00ce\3\2\2"+
-		"\2\u00d0\63\3\2\2\2\17DPW^nz\u0087\u0090\u00a2\u00aa\u00c3\u00c9\u00cf";
+		"\u00b7\u00b8\7\17\2\2\u00b8\u00b9\7\3\2\2\u00b9\u00ba\5,\27\2\u00ba\u00bb"+
+		"\7\t\2\2\u00bb+\3\2\2\2\u00bc\u00bd\7\32\2\2\u00bd\u00be\7\b\2\2\u00be"+
+		"\u00c1\5,\27\2\u00bf\u00c1\7\32\2\2\u00c0\u00bc\3\2\2\2\u00c0\u00bf\3"+
+		"\2\2\2\u00c1-\3\2\2\2\u00c2\u00c3\7\20\2\2\u00c3\u00c4\7\3\2\2\u00c4\u00c5"+
+		"\5\60\31\2\u00c5\u00c6\7\t\2\2\u00c6/\3\2\2\2\u00c7\u00ca\5\62\32\2\u00c8"+
+		"\u00ca\7\33\2\2\u00c9\u00c7\3\2\2\2\u00c9\u00c8\3\2\2\2\u00ca\61\3\2\2"+
+		"\2\u00cb\u00cc\7\32\2\2\u00cc\u00cd\7\b\2\2\u00cd\u00d0\5\62\32\2\u00ce"+
+		"\u00d0\7\32\2\2\u00cf\u00cb\3\2\2\2\u00cf\u00ce\3\2\2\2\u00d0\63\3\2\2"+
+		"\2\17DPW^nz\u0087\u0090\u00a2\u00aa\u00c0\u00c9\u00cf";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {
