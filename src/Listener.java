@@ -40,7 +40,7 @@ public class Listener extends projetCompilBaseListener {
         public void exitTinyLang(projetCompilParser.TinyLangContext ctx) {
                 if(errors.size() == 0) { // no errors
                         quads.addQuad("END","","","");
-                        System.out.println("program compiled without errors!");
+                        System.out.println("Le programme a été compilé sans erreurs!");
                         System.out.println("La table des symboles ");
                         System.out.println("**************************************************************");
                         for (int i = 0; i < table.getSize(); i++) {
@@ -68,7 +68,7 @@ public class Listener extends projetCompilBaseListener {
                 else
                 {
                         System.out.println("******************************************************");
-                        System.out.println("program compiled with the following errors");
+                        System.out.println("Le programme a été compilé avec les erreurs suivantes : \n");
                         for (int i = 0; i < errors.size(); i++) {
                                 System.out.println(errors.get(i));
                         }
@@ -154,7 +154,7 @@ public class Listener extends projetCompilBaseListener {
                                 addCtxType(ctx, null);
                         }
                         cpt++;
-                        String Res;
+                        String Res= null;
 
                         if(pileExp.size()>=2) {
                                 String t1 = pileExp.removeLast();
@@ -167,16 +167,19 @@ public class Listener extends projetCompilBaseListener {
                         if (pile2.size()>=2) {
                                 String p1 = pile2.removeLast();
                                 String p2 = pile2.removeLast();
+
                                 if(p2.contains("\"")||p1.contains("\"")) {
 
                                 }else {
                                         if (ctx.operateurP().PLUS() != null) {
                                                 Res = String.valueOf(Float.valueOf(p2) + Float.valueOf(p1));
                                                 pile2.add(Res);
+
                                         } else {
                                                 Res = String.valueOf(Float.valueOf(p2) - Float.valueOf(p1));
                                                 pile2.add(Res);
                                         }
+
                                 }
                         }
                 }
@@ -213,10 +216,10 @@ public class Listener extends projetCompilBaseListener {
                         addCtxType(ctx, getCtxType(ctx.operand()));
                 }
                 else
-                {       if(TypesCompatible(getCtxType(ctx.suite_operation2()),getCtxType(ctx.operand())))
-                                addCtxType(ctx,getResultingType(getCtxType(ctx.suite_operation2()),getCtxType(ctx.operand())));
-                          else {
-                                  addCtxType(ctx, null);
+                {       if(TypesCompatible(getCtxType(ctx.suite_operation2()),getCtxType(ctx.operand()))){
+                        addCtxType(ctx,getResultingType(getCtxType(ctx.suite_operation2()),getCtxType(ctx.operand())));}
+                        else {
+                        addCtxType(ctx, null);
                         }
                         cpt++;
                         String Res2 = null;
@@ -232,13 +235,12 @@ public class Listener extends projetCompilBaseListener {
                                 String p2 = pile2.removeLast();
 
                                 if (ctx.operateurM().DIV() != null) {
+                                        addCtxType(ctx, reel);
                                         if(p2.contains("\"")||p1.contains("\"")) {
 
                                         }else {
-                                                //addCtxType(ctx,reel);
                                                 if (Float.valueOf(p1) == 0) {
                                                         errors.add("La division par 0 n'est pas autorisée à la ligne " + ctx.operateurM().DIV().getSymbol().getLine());
-                                                        pile2.add(Res2);
                                                 } else {
                                                         Res2 = String.valueOf(Float.valueOf(p2) / Float.valueOf(p1));
                                                         pile2.add(Res2);
@@ -370,16 +372,41 @@ public class Listener extends projetCompilBaseListener {
         }
 
         @Override public void exitWrite(projetCompilParser.WriteContext ctx) {
-                ctx.chaine().STRINGVAL();
         }
 
         @Override public void exitChaine(projetCompilParser.ChaineContext ctx) {
-                ctx.STRINGVAL();
+
+                        if (ctx.STRINGVAL()!= null){
+                                String term = String.valueOf(ctx.STRINGVAL().getText());
+                                quads.addQuad("WRITE",term, "", "");
+                        }
+                        else{
+                                if(ctx.listID().ID()!=null) {
+                                        String term = ctx.listID().ID().getText();
+                                        if (table.containsElement(term)) {
+                                                if(table.getElement(term).isInitialise()){
+                                                        quads.addQuad("WRITE",term, "", "");
+                                                }
+                                                else{
+                                                        errors.add ("variable non initialisée à la ligne " + ctx.listID().ID().getSymbol().getLine());
+                                                }
+                                        }
+                                        else{
+                                                errors.add ("variable non déclarée à la ligne " + ctx.listID().ID().getSymbol().getLine());
+                                        }
+
+                                }
+                                else{
+                                        errors.add("Erreur syntaxique dans WRITE");
+                                }
+                        }
+
+
         }
 
 
         @Override public void exitListID(projetCompilParser.ListIDContext ctx) {
-                super.exitListID(ctx);
+
         }
 
         public boolean lookUP(projetCompilParser.OperandContext ctx){
@@ -420,21 +447,21 @@ public class Listener extends projetCompilBaseListener {
                                 if (second.equals(entier)) {
                                         return true;
                                 } else {
-                                        System.out.println("types incompatibles");
+
                                         return false;
                                 }
                         } else if (premier.equals(reel)) {
                                 if (second.equals(entier) || second.equals(reel)) {
                                         return true;
                                 } else {
-                                        System.out.println("types incompatibles");
+
                                         return false;
                                 }
                         } else if (premier.equals(chaine)) {
                                 if (second.equals(chaine)) {
                                         return true;
                                 } else {
-                                        System.out.println("types incompatibles");
+
                                         return false;
                                 }
                         }
