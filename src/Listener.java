@@ -15,6 +15,7 @@ public class Listener extends projetCompilBaseListener {
         private String reel = "floatCompil";
         private String chaine = "StringCompil";
         private LinkedList<String> pileExp = new LinkedList<>();
+        private int cpt=0;
 
         private TS table = new TS();
         private Quads quads = new Quads();
@@ -116,23 +117,18 @@ public class Listener extends projetCompilBaseListener {
                 int line = idToken.getLine();
                 int column = idToken.getCharPositionInLine()+1;
                 String id = ctx.getChild(0).getText();
-                /*System.out.println("HERE here hrer*************************");
-                for(int i=0;i<ctx.children.size();i++){
-                        System.out.println("HERE: "+ctx.children.get(i).getText());
-                }*/
                 System.out.println("HERE here hreroperation*************************");
                 for(int i=0;i<pileExp.size();i++){
                         System.out.println("HERE: "+pileExp.get(i));
                 }
-                pileExp.clear();
                 if (table.getElement(ctx.ID().getText()) != null){
                         if (!affectTypesCompatible(table.getElement(ctx.ID().getText()).type, getCtxType(ctx.suite_operation())))
                                 errors.add("incompatible types in affectation ligne : " + ctx.ID().getSymbol().getLine());
                         clearMap();}
                 if(table.containsElement(id)){
                         if(table.getElement(id).declared){
-                                quads.addQuad("=","","exp",id);
-                                //int sauv_temp = quads.size();
+                                String temp = pileExp.removeLast();
+                                quads.addQuad("=","",temp,id);
                                 table.getElement(id).setInitialise(true);
                                 table.getElement(id).setValue(v);
                         }else{
@@ -144,17 +140,9 @@ public class Listener extends projetCompilBaseListener {
         }
 
         @Override public void exitSuite_operation(projetCompilParser.Suite_operationContext ctx) {
-
-
                 if(ctx.suite_operation() == null){
                         addCtxType(ctx,getCtxType(ctx.suite_operation2()));
-
-                /*for (int i=0; i< ctx.children.size(); i++){
-                        if (ctx.suite_operation().suite_operation2().operand().ID() !=null){
-                                System.out.println("affichage"+ ctx.children.get(i).getText());
-                        }
-
-                }*/}
+                }
                 else
                 {
                         if(TypesCompatible(getCtxType(ctx.suite_operation()),getCtxType(ctx.suite_operation2())))
@@ -162,12 +150,12 @@ public class Listener extends projetCompilBaseListener {
                         else {
                                 addCtxType(ctx, null);
                         }
+                        cpt++;
                         String t1 = pileExp.removeLast();
                         String t2 = pileExp.removeLast();
-                        quads.addQuad(ctx.operateurP().getText(),t2,t1,"tempPLUS");
-                        pileExp.add("tempPLUS");
-
-
+                        String temp = "temp"+cpt;
+                        quads.addQuad(ctx.operateurP().getText(),t2,t1,temp);
+                        pileExp.add(temp);
                 }
         }
 
@@ -212,21 +200,19 @@ public class Listener extends projetCompilBaseListener {
         @Override public void exitSuite_operation2(projetCompilParser.Suite_operation2Context ctx) {
                 if(ctx.suite_operation2() == null) {
                         addCtxType(ctx, getCtxType(ctx.operand()));
-                        //quads.addQuad("*", "var", "suiteopert2null","");
                 }
                 else
-                {
-                        //quads.addQuad("*", "var", "suiteopert2notnull","");
-                        if(TypesCompatible(getCtxType(ctx.suite_operation2()),getCtxType(ctx.operand())))
+                {       if(TypesCompatible(getCtxType(ctx.suite_operation2()),getCtxType(ctx.operand())))
                                 addCtxType(ctx,getResultingType(getCtxType(ctx.suite_operation2()),getCtxType(ctx.operand())));
                         else {
                                 addCtxType(ctx, null);
                         }
-
+                        cpt++;
                         String t1 = pileExp.removeLast();
                         String t2 = pileExp.removeLast();
-                        quads.addQuad(ctx.operateurM().getText(),t2,t1,"temp");
-                        pileExp.add("temp");
+                        String temp = "temp"+cpt;
+                        quads.addQuad(ctx.operateurM().getText(),t2,t1,temp);
+                        pileExp.add(temp);
                 }
 
         }
