@@ -1,11 +1,10 @@
 public class QuadElement {
 
-        String quad[] = new String[4]; // (Opérateur, Opérande gauche, Opérande droite, resultat)
+    String quad[] = new String[4]; // (Opérateur, Opérande gauche, Opérande droite, resultat)
 
     public QuadElement(String[] vals) {
             this.quad = vals;
         }
-
         //constructeur du quad
         public QuadElement(String val1, String val2, String val3, String val4)
         {   quad[0] = val1;

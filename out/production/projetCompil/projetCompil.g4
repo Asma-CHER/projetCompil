@@ -23,18 +23,16 @@ inst : affect
       | write;
 
 // affectation\
-affect : ID AFF suite_operation ';';//routine de verification de declaration
+affect : ID AFF suite_operation ';';
 
 suite_operation :suite_operation operateurP suite_operation2
                 |suite_operation2
                 ;
 suite_operation2 : suite_operation2 operateurM operand
                    |operand;
-//operation : operand operateur operand
-           // |operand;//routine de verification de compatibilite type;
 operateurP : PLUS | MINUS ;
 operateurM: MUL | DIV ;
-operand : ID //routine de verification de declaration
+operand : ID
         | val
         |'(' suite_operation')';
 val : INTEGERVAL | FLOATVAL | STRINGVAL |MINUS INTEGERVAL|MINUS FLOATVAL ;
@@ -45,7 +43,7 @@ elseinst : ELSE '{' instsList '}'
         |
         ;
 cond : operandif op operandif ;
-operandif : ID //routine de verification de declaration
+operandif : ID
         | val
         ;
 op : SUP | INF | SUPE | INFE | DIF | EQ;
@@ -72,8 +70,7 @@ SPACE: [ ] -> skip;
 ONELINE : '/''/'(~[\n])* -> skip;
 MULLINE : '/*'(.)*?'*/' -> skip;
 
-//******************* Mots clés *******************//
-
+//*** Mots clés ***//
 COMPIL :'compil';
 INT : 'intCompil';
 FLOAT : 'floatCompil';
@@ -88,9 +85,7 @@ DO : 'do';
 WHILE : 'while';
 
 
-//*********** Valeurs ******************* //
-
-
+//*********** Valeurs ***************** //
 INTEGERVAL : '0'|[1-9][0-9]*;
 FLOATVAL : '-'?[1-9][0-9]*('.'[0-9]*);
 NAMEPROG : [A-Z][a-zA-Z0-9]*;
@@ -98,12 +93,14 @@ ID : [a-zA-Z][a-zA-Z0-9]*;
 STRINGVAL : '"'(~["]|'\\"')*'"';
 
 // ************ opérateurs **************//
-
+//*Arithmetique*//
 AFF : '=';
 PLUS : '+';
 MINUS : '-';
 MUL : '*';
 DIV : '/';
+
+//*Logique*//
 SUP : '>';
 INF : '<';
 SUPE : '>=';

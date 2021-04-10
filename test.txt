@@ -1,7 +1,7 @@
 compil NAMEPROG ()
 {
-intCompil term1, term2, a,b,c ,v,u;
-floatCompil div;
+intCompil  term2, b,c ,v,u,z;
+floatCompil div,term1,a;
 StringCompil chaine1, chaine2;
 start
 
@@ -9,21 +9,22 @@ v=2;
 c=5;
 a=10;
 b=1;
+z=8;
 chaine1 = "racha";
 chaine2 = "racha";
 term1=2;
-//term1 = c+a*v/b*term1;
+term1 = c+a*v/b*term1;
+a = b*v+10/z ;
+
 /*term1=c+b;
 term1=a*v;*/
 b = 0;
-if (a>b) then{
+
 if (a>b) then{
 a= 2+6*4;
-b=10;}}
+b=10;}
 
-if (a==b) then{
-u=5;
-}
+if (a==b) then{ u=5;} else {u=10;}
 scanCompil(n,m,t,r);
 printCompil("hello world");
 printCompil(a);

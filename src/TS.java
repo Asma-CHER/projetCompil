@@ -18,7 +18,6 @@ public class TS
             this.initialise = initialise;
 
         }
-
         public String getValue() {
             return value;
         }
@@ -71,9 +70,7 @@ public class TS
         }
     }
 
-
     public ArrayList<Element> L = new ArrayList<Element>();
-
 
     public Element getElement(String name)
     {
@@ -83,7 +80,6 @@ public class TS
         }
         return null;
     }
-
     public boolean containsElement(String name)
     { return getElement(name) != null; }
 

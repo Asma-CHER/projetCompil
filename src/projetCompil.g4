@@ -23,18 +23,16 @@ inst : affect
       | write;
 
 // affectation\
-affect : ID AFF suite_operation ';';//routine de verification de declaration
+affect : ID AFF suite_operation ';';
 
 suite_operation :suite_operation operateurP suite_operation2
                 |suite_operation2
                 ;
 suite_operation2 : suite_operation2 operateurM operand
                    |operand;
-//operation : operand operateur operand
-           // |operand;//routine de verification de compatibilite type;
 operateurP : PLUS | MINUS ;
 operateurM: MUL | DIV ;
-operand : ID //routine de verification de declaration
+operand : ID
         | val
         |'(' suite_operation')';
 val : INTEGERVAL | FLOATVAL | STRINGVAL |MINUS INTEGERVAL|MINUS FLOATVAL ;
@@ -45,7 +43,7 @@ elseinst : ELSE '{' instsList '}'
         |
         ;
 cond : operandif op operandif ;
-operandif : ID //routine de verification de declaration
+operandif : ID
         | val
         ;
 op : SUP | INF | SUPE | INFE | DIF | EQ;

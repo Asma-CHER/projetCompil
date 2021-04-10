@@ -48,22 +48,17 @@ public class Listener extends projetCompilBaseListener {
                         }
                         System.out.println("**************************************************************");
                         System.out.println("********************** Les QUADS *****************************");
-
                         for (int i = 0; i < quads.size(); i++) {
                                 System.out.println(i+"-"+quads.getQuad(i).toString());
                         }
-                        System.out.println("**************************************************************");
-
                         CodeGenerator codeGenerator = new CodeGenerator(quads);
                         codeObjet = codeGenerator.generateCode(quads);
                         System.out.println("**************************************************************");
                         System.out.println("********************** CODE OBJET *****************************");
-
                         for (int i = 0; i < codeObjet.size(); i++) {
                                 System.out.println(codeObjet.get(i).toString());
                         }
                         System.out.println("**************************************************************");
-
                 }
                 else
                 {
@@ -147,20 +142,17 @@ public class Listener extends projetCompilBaseListener {
                         addCtxType(ctx,getCtxType(ctx.suite_operation2()));
                 }
                 else
-                {
-                        if(TypesCompatible(getCtxType(ctx.suite_operation()),getCtxType(ctx.suite_operation2())))
+                {       if(TypesCompatible(getCtxType(ctx.suite_operation()),getCtxType(ctx.suite_operation2())))
                                 addCtxType(ctx,getResultingType(getCtxType(ctx.suite_operation()),getCtxType(ctx.suite_operation2())));
                         else {
                                 addCtxType(ctx, null);
                         }
                         cpt++;
                         String Res= null;
-
                         if(pileExp.size()>=2) {
                                 String t1 = pileExp.removeLast();
                                 String t2 = pileExp.removeLast();
                                 String temp = "temp" + cpt;
-
                                 quads.addQuad(ctx.operateurP().getText(), t2, t1, temp);
                                 pileExp.add(temp);
                         }
@@ -187,7 +179,6 @@ public class Listener extends projetCompilBaseListener {
 
         @Override public void exitOperand(projetCompilParser.OperandContext ctx) {
                 if(ctx.ID()!=null){
-
                         Token idToken =ctx.ID().getSymbol();
                         int line = idToken.getLine();
                         int column = idToken.getCharPositionInLine()+1;
@@ -278,20 +269,14 @@ public class Listener extends projetCompilBaseListener {
 
         }
 
-        @Override public void exitIfinst(projetCompilParser.IfinstContext ctx) {
-                //    quads.addQuad("BR", String.valueOf(quads.size()+1),"","");
-                quads.getQuad(sauvCond-1).setQuad(1, String.valueOf(quads.size()));
-        }
-
+        @Override public void exitIfinst(projetCompilParser.IfinstContext ctx) { }
         @Override public void enterElseinst(projetCompilParser.ElseinstContext ctx) {
                 quads.addQuad("BR", "","","");
                 sauvBR=quads.size();
                 quads.getQuad(sauvCond).setQuad(1, String.valueOf(quads.size()));
         }
-
         @Override public void exitElseinst(projetCompilParser.ElseinstContext ctx) {
-                quads.getQuad(sauvBR-1).setQuad(1, String.valueOf(quads.size()+1));
-
+                quads.getQuad(sauvBR-1).setQuad(1, String.valueOf(quads.size()));
         }
 
         @Override public void exitCond(projetCompilParser.CondContext ctx) {
@@ -302,7 +287,6 @@ public class Listener extends projetCompilBaseListener {
                         op2=pile.removeLast();
                         op1=pile.removeLast();
                 }
-
                 opt=ctx.op().getText();
                 quads.addQuad(getBR(opt),"",op1,op2);
                 sauvCond = quads.size()-1;
