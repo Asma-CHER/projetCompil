@@ -58,11 +58,9 @@ public class CodeGenerator {
     private void branchBRGen(QuadElement quad, int index) {
             insts.add(new AssembleurInst(" ","JUMP",quad.getVal(1),""));
     }
-
     private void outputGen(QuadElement quad,int index) {
         insts.add(new AssembleurInst(String.valueOf(index),"OUTPUT",quad.getVal(1),""));
     }
-
     private void inputGen(QuadElement quad,int index) {
         insts.add(new AssembleurInst(String.valueOf(index),"INPUT",quad.getVal(1),""));
     }
