@@ -333,7 +333,6 @@ public class Listener extends projetCompilBaseListener {
         @Override public void exitDowhile_inst(projetCompilParser.Dowhile_instContext ctx) {
                 quads.getQuad(sauvCond).setQuad(1, String.valueOf(sauvDebWile));
                 quads.getQuad(sauvCond).setQuad(0,getBRinverse(quads.getQuad(sauvCond).getVal(0)));
-
         }
 
         @Override public void exitRead(projetCompilParser.ReadContext ctx) { }

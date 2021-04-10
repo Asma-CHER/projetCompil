@@ -92,7 +92,7 @@ public class CodeGenerator {
         }
         if(quad.getVal(0).equals("-")){
             String etiqt = getInAcc(quad,quad.getVal(1),"",index);
-            insts.add(new AssembleurInst(etiqt,"DIV",quad.getVal(2),""));
+            insts.add(new AssembleurInst(etiqt,"SUB",quad.getVal(2),""));
         }
         if(quad.getVal(0).equals("/")){
             String etiqt = getInAcc(quad,quad.getVal(1),"",index);
