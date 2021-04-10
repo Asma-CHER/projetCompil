@@ -200,6 +200,10 @@ public class Listener extends projetCompilBaseListener {
                         pile2.add(ctx.val().getText());
 
                 }
+                if (ctx.suite_operation()!= null){
+                        addCtxType(ctx, getCtxType(ctx.suite_operation()));
+
+                }
         }
 
         @Override public void exitSuite_operation2(projetCompilParser.Suite_operation2Context ctx) {
